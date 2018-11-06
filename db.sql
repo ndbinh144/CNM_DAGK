@@ -28,4 +28,4 @@ CREATE TABLE `listbooks` (
 -- ----------------------------
 -- Table insert for `orderdetails`
 -- ----------------------------
-INSERT INTO `listbooks` VALUES (1, 'Binh', '0929364980', 'quận 1, hồ chí minh', 'thích xe ferrari');
+INSERT INTO `listbooks`(`Fullname`, `PhoneNumber`, `Address`, `Note`) VALUES ('Binh', '0929364980', 'quận 1, hồ chí minh', 'thích xe ferrari');
