@@ -1,7 +1,16 @@
 var express = require('express');
 var productRepo = require('../repos/listbookRepo.js');
-
+var axios = require('axios');
 var router = express.Router();
+
+router.get('/:address', (req, res) => {
+	var address = req.params.address;
+	const URL = `https://geocoder.api.here.com/6.2/geocode.json?app_id=t38YeeN2CdvTOlESpiKl&app_code=RplvOnsG0MVj2Q4Haui4Ng&searchtext=${address}`;
+	axios.get(URL).then(response => {
+		console.log(response.data);
+		res.json(response.data);
+	})
+})
 
 router.get('/', (req, res) => {
 	productRepo.loadAll()
