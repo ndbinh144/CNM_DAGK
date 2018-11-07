@@ -22,10 +22,11 @@ CREATE TABLE `listbooks` (
   `PhoneNumber` varchar(11) NOT NULL,
   `Address` nvarchar(100) NOT NULL,
   `Note` nvarchar(300) NOT NULL,
+  `Status` int(2) NOT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Table insert for `orderdetails`
 -- ----------------------------
-INSERT INTO `listbooks`(`Fullname`, `PhoneNumber`, `Address`, `Note`) VALUES ('Binh', '0929364980', 'quận 1, hồ chí minh', 'thích xe ferrari');
+INSERT INTO `listbooks`(`Fullname`, `PhoneNumber`, `Address`, `Note`, `Status`) VALUES ('Binh', '0929364980', 'quận 1, hồ chí minh', 'thích xe ferrari',1);
