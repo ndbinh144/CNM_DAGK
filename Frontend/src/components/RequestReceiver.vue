@@ -1,3 +1,55 @@
+<template>
+    <div id="booking" class="section">
+		<div class="section-center">
+			<div class="container">
+				<div class="row">
+					<div class="booking-form">
+						<div class="form-header">
+							<h1>Book a car</h1>
+						</div>
+						<form>
+							<div class="form-group">
+								<span class="form-label">Full name</span>
+								<input v-model="name" class="form-control" type="tel" placeholder="Enter your full name">
+							</div>
+							<div class="form-group">
+								<span class="form-label">Phone</span>
+								<input v-model="phone" class="form-control" type="tel" placeholder="Enter your phone number">
+							</div>
+							<div class="form-group">
+								<span class="form-label">Pickup Location</span>
+								<input v-model="location" class="form-control" type="text" placeholder="Enter ZIP/Location">
+							</div>
+							<div class="form-group">
+								<span class="form-label">Note</span>
+								<input v-model="note" class="form-control" type="text" placeholder="Enter Note">
+							</div>
+							<div class="form-btn">
+								<button v-on:click="booknow" class="submit-btn">Book Now</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>
+
+<script>
+export default {
+    name : "submit-btn",
+    method :{
+        booknow: function() {
+            alert('hello');
+        }
+    }
+} 
+</script>
+
+<style scoped>
+h1{
+   font-weight: normal;
+}
 .section {
 	position: relative;
 	height: 100vh;
@@ -14,7 +66,7 @@
 
 #booking {
 	font-family: 'Montserrat', sans-serif;
-	background-image: url('../img/background.jpg');
+    /*background-image: url('../img/background.jpg');*/
 	background-size: cover;
 	background-position: center;
 }
@@ -68,6 +120,7 @@
 	box-shadow: none;
 	font-weight: 400;
 	color: #101113;
+    text-align: center;
 }
 
 .booking-form .form-control::-webkit-input-placeholder {
@@ -132,3 +185,4 @@
 	border-radius: 3px;
 	text-transform: uppercase;
 }
+</style>
