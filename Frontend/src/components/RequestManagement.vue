@@ -15,7 +15,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in list_request">
+        <tr v-for="item in list_request" v-bind:key="item.STT">
           <td>{{ item.STT }}</td>
           <td>{{ item.ThoiDiem }}</td>
           <td>{{ item.Ten }}</td>
