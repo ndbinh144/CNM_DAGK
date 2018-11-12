@@ -1,188 +1,87 @@
 <template>
-    <div id="booking" class="section">
-		<div class="section-center">
-			<div class="container">
-				<div class="row">
-					<div class="booking-form">
-						<div class="form-header">
-							<h1>Book a car</h1>
-						</div>
-						<form>
-							<div class="form-group">
-								<span class="form-label">Full name</span>
-								<input v-model="name" class="form-control" type="tel" placeholder="Enter your full name">
-							</div>
-							<div class="form-group">
-								<span class="form-label">Phone</span>
-								<input v-model="phone" class="form-control" type="tel" placeholder="Enter your phone number">
-							</div>
-							<div class="form-group">
-								<span class="form-label">Pickup Location</span>
-								<input v-model="location" class="form-control" type="text" placeholder="Enter ZIP/Location">
-							</div>
-							<div class="form-group">
-								<span class="form-label">Note</span>
-								<input v-model="note" class="form-control" type="text" placeholder="Enter Note">
-							</div>
-							<div class="form-btn">
-								<button v-on:click="booknow" class="submit-btn">Book Now</button>
-							</div>
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+<div id="receiver">
+  <v-toolbar style="margin-top:0px;">
+    <v-toolbar-side-icon></v-toolbar-side-icon>
+    <v-toolbar-title>BCT APP</v-toolbar-title>
+    <v-spacer></v-spacer>
+    <v-toolbar-items class="hidden-sm-and-down">
+      <v-btn flat>Log Out</v-btn>
+    </v-toolbar-items>
+  </v-toolbar>
+	<v-container grid-list-md text-xs-center>
+  <v-parallax 
+	src="https://cdn.vuetifyjs.com/images/parallax/material.jpg">
+	<h1 style="color:black;">BOOK A CAR</h1>
+  <v-form ref="form" v-model="valid" lazy-validation>
+    <v-text-field
+      v-model="name"
+      :counter="20"
+      label="Fullname"
+      required
+    ></v-text-field>
+    <v-text-field
+      v-model="phone"
+      label="Phone"
+      required
+    ></v-text-field>
+    <v-text-field
+      v-model="pickuplocation"
+      label="Pickup Location"
+      required
+    ></v-text-field>
+		<v-text-field
+      v-model="note"
+      label="Note"
+    ></v-text-field>
+    <v-checkbox
+      v-model="checkbox"
+      :rules="[v => !!v || 'You must agree to continue!']"
+      label="Do you agree?"
+      required
+    ></v-checkbox>
+
+    <v-btn
+      :disabled="!valid"
+      @click="submit"
+    >
+      submit
+    </v-btn>
+    <v-btn @click="clear">clear</v-btn>
+  </v-form>
+	</v-parallax>
+	</v-container>
+  <v-footer class="pa-3">
+    <v-spacer></v-spacer>
+    <div>&copy; {{ new Date().getFullYear() }}</div>
+  </v-footer>
+  </div>
 </template>
 
 <script>
-export default {
-    name : "submit-btn",
-    method :{
-        booknow: function() {
-            alert('hello');
+  import axios from 'axios'
+
+  export default {
+    data: () => ({
+      valid: true,
+      name: '',
+      checkbox: false
+    }),
+    methods: {
+      submit () {
+        if (this.$refs.form.validate()) {
+          // Native form submission is not yet supported
+          axios.post('/locationidentifier', {
+            name: this.name,
+						phone: this.phone,
+						pickuplocation: this.pickuplocation,
+						note: this.note,
+            checkbox: this.checkbox
+          })
         }
+      },
+      clear () {
+        this.$refs.form.reset()
+      }
     }
-} 
+  }
 </script>
-
-<style scoped>
-h1{
-   font-weight: normal;
-}
-.section {
-	position: relative;
-	height: 100vh;
-}
-
-.section .section-center {
-	position: absolute;
-	top: 50%;
-	left: 0;
-	right: 0;
-	-webkit-transform: translateY(-50%);
-	transform: translateY(-50%);
-}
-
-#booking {
-	font-family: 'Montserrat', sans-serif;
-    /*background-image: url('../img/background.jpg');*/
-	background-size: cover;
-	background-position: center;
-}
-
-#booking::before {
-	content: '';
-	position: absolute;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	top: 0;
-	background: rgba(0, 0, 0, 0.6);
-}
-
-.booking-form {
-	max-width: 642px;
-	width: 100%;
-	margin: auto;
-}
-
-.booking-form .form-header {
-	text-align: center;
-	margin-bottom: 25px;
-}
-
-.booking-form .form-header h1 {
-	font-size: 58px;
-	text-transform: uppercase;
-	font-weight: 700;
-	color: #ffc001;
-	margin: 0px;
-}
-
-.booking-form>form {
-	background-color: #101113;
-	padding: 30px 20px;
-	border-radius: 3px;
-}
-
-.booking-form .form-group {
-	position: relative;
-	margin-bottom: 15px;
-}
-
-.booking-form .form-control {
-	background-color: #f5f5f5;
-	border: none;
-	height: 45px;
-	border-radius: 3px;
-	-webkit-box-shadow: none;
-	box-shadow: none;
-	font-weight: 400;
-	color: #101113;
-    text-align: center;
-}
-
-.booking-form .form-control::-webkit-input-placeholder {
-	color: rgba(16, 17, 19, 0.3);
-}
-
-.booking-form .form-control:-ms-input-placeholder {
-	color: rgba(16, 17, 19, 0.3);
-}
-
-.booking-form .form-control::placeholder {
-	color: rgba(16, 17, 19, 0.3);
-}
-
-.booking-form input[type="date"].form-control:invalid {
-	color: rgba(16, 17, 19, 0.3);
-}
-
-.booking-form select.form-control {
-	-webkit-appearance: none;
-	-moz-appearance: none;
-	appearance: none;
-}
-
-.booking-form select.form-control+.select-arrow {
-	position: absolute;
-	right: 0px;
-	bottom: 6px;
-	width: 32px;
-	line-height: 32px;
-	height: 32px;
-	text-align: center;
-	pointer-events: none;
-	color: #101113;
-	font-size: 14px;
-}
-
-.booking-form select.form-control+.select-arrow:after {
-	content: '\279C';
-	display: block;
-	-webkit-transform: rotate(90deg);
-	transform: rotate(90deg);
-}
-
-.booking-form .form-label {
-	color: #fff;
-	font-size: 12px;
-	font-weight: 400;
-	margin-bottom: 5px;
-	display: block;
-	text-transform: uppercase;
-}
-
-.booking-form .submit-btn {
-	color: #101113;
-	background-color: #ffc001;
-	font-weight: 700;
-	height: 50px;
-	border: none;
-	width: 100%;
-	display: block;
-	border-radius: 3px;
-	text-transform: uppercase;
-}
-</style>
