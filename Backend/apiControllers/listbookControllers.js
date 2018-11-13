@@ -8,7 +8,7 @@ router.get('/:address', (req, res) => {
 	var address = req.params.address;
 	var uri = encodeURI(address);
 	console.log('current time: ', moment().format());
-	const url = `https://geocoder.api.here.com/6.2/geocode.json?app_id=t38YeeN2CdvTOlESpiKl&app_code=RplvOnsG0MVj2Q4Haui4Ng&searchtext=${uri}&jsonattributes=1`;
+	const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${uri}&key=AIzaSyBBLyWj-3FWtCbCXGW3ysEiI2fDfrv2v0Q`;
 	// const url = `https://geocoder.cit.api.here.com/6.2/geocode.json?xnlp=CL_JSMv3.0.17.0
 	// &app_id=t38YeeN2CdvTOlESpiKl&app_code=RplvOnsG0MVj2Q4Haui4Ng
 	// &searchText=${uri}
