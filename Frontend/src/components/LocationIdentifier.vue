@@ -85,10 +85,6 @@ export default {
     this.geolocate()
   },
   methods: {
-    // receives a place object via the autocomplete component
-    setPlace (place) {
-      this.currentPlace = place
-    },
     addMarker (ID) {
       /* Gọi API lấy tạo độ của địa chỉ dựa trên ID */
       //
@@ -102,18 +98,18 @@ export default {
       }
       this.markers.push({ position: marker })
       this.center = marker
+    },
+    geolocate: function () {
+      navigator.geolocation.getCurrentPosition(position => {
+        this.center = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        }
+      })
+    },
+    Identify () {
+      // Gọi API gửi địa chỉ sau khi xác nhận
     }
-  },
-  geolocate: function () {
-    navigator.geolocation.getCurrentPosition(position => {
-      this.center = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude
-      }
-    })
-  },
-  Identify: function () {
-    // Gọi API gửi tọa độ đã xác định
   }
 }
 </script>
