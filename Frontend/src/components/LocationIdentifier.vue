@@ -37,7 +37,8 @@
           :key="index"
           v-for="(m, index) in markers"
           :position="m.position"
-          @click="center=m.position"></gmap-marker>
+          @click="center=m.position"
+          :draggable="true"></gmap-marker>
         </gmap-map>
         <!-- <button class="btn btn-success" id="IdentiifyBtn" @click="Identify">Xác định vị trí</button> -->
       </div>
@@ -85,10 +86,6 @@ export default {
     this.geolocate()
   },
   methods: {
-    // receives a place object via the autocomplete component
-    setPlace (place) {
-      this.currentPlace = place
-    },
     addMarker (ID) {
       /* Gọi API lấy tạo độ của địa chỉ dựa trên ID */
       //
@@ -101,16 +98,18 @@ export default {
         lng: lngIn
       }
       this.markers.push({ position: marker })
-      this.center = marker  },
+      this.center = marker
+    },
     geolocate: function () {
-    navigator.geolocation.getCurrentPosition(position => {
-      this.center = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude
-      }
-    })
-  }, Identify: function () {
-    // Gọi API gửi tọa độ đã xác định
+      navigator.geolocation.getCurrentPosition(position => {
+        this.center = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        }
+      })
+    },
+    Identify () {
+      // Gọi API gửi địa chỉ sau khi xác nhận
     }
   }
 }
