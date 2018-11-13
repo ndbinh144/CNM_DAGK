@@ -39,7 +39,7 @@
           :position="m.position"
           @click="center=m.position"></gmap-marker>
         </gmap-map>
-        <button class="btn btn-success" id="IdentiifyBtn" @click="Identify">Xác định vị trí</button>
+        <!-- <button class="btn btn-success" id="IdentiifyBtn" @click="Identify">Xác định vị trí</button> -->
       </div>
     </div>
   </div>
@@ -101,19 +101,17 @@ export default {
         lng: lngIn
       }
       this.markers.push({ position: marker })
-      this.center = marker
-    }
-  },
-  geolocate: function () {
+      this.center = marker  },
+    geolocate: function () {
     navigator.geolocation.getCurrentPosition(position => {
       this.center = {
         lat: position.coords.latitude,
         lng: position.coords.longitude
       }
     })
-  },
-  Identify: function () {
+  }, Identify: function () {
     // Gọi API gửi tọa độ đã xác định
+    }
   }
 }
 </script>
