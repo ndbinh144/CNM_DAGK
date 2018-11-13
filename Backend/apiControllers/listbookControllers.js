@@ -3,6 +3,10 @@ var productRepo = require('../repos/listbookRepo.js');
 var axios = require('axios');
 var moment = require('moment');
 var router = express.Router();
+var bodyParser = require('body-parser')
+
+var jsonParser = bodyParser.json()
+var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 router.get('/:address', (req, res) => {
 	var address = req.params.address;
@@ -32,12 +36,9 @@ router.get('/', (req, res) => {
 		})
 })
 
-router.post('/:fullname/:phonenumber/:address/:note', (req, res) => {
-	var fullname = req.params.fullname;
-	var phonenumber = req.params.phonenumber;
-	var address = req.params.address;
-	var note = req.params.note;
-	productRepo.addBook(fullname, phonenumber, address, note)
+// fullname, phonenumber, address, note
+router.post('/', urlencodedParser, (req, res) => {
+	productRepo.addBook(req.body.FullName, req.body.PhoneNumber, req.body.Address, req.body.Note)
 		.then(rows => {
 			res.json(rows);
 		}).catch(err => {
