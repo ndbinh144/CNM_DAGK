@@ -37,6 +37,8 @@
           :key="index"
           v-for="(m, index) in markers"
           :position="m.position"
+          :draggable="true"
+          @drag="updateCoordinates"
           @click="center=m.position"></gmap-marker>
         </gmap-map>
         <button class="btn btn-success" id="IdentiifyBtn" @click="Identify">Xác định vị trí</button>
@@ -53,6 +55,7 @@ export default {
     return {
       center: { lat: 21.0031177, lng: 105.82014079999999 },
       markers: [],
+      coordinates: null,
       list_request: [
         { ID: 1,
           Ten: 'Trần Nhựt Cường',
@@ -109,6 +112,16 @@ export default {
     },
     Identify () {
       // Gọi API gửi địa chỉ sau khi xác nhận
+      console.log(this.markers[0].position.lat)
+      console.log(this.markers[0].position.lng)
+    },
+    updateCoordinates (location) {
+      this.markers = []
+      const marker = {
+        lat: location.latLng.lat(),
+        lng: location.latLng.lng()
+      }
+      this.markers.push({ position: marker })
     }
   }
 }
