@@ -1,13 +1,22 @@
 var express = require('express');
 var productRepo = require('../repos/listbookRepo.js');
 var axios = require('axios');
+var moment = require('moment');
 var router = express.Router();
 
 router.get('/:address', (req, res) => {
 	var address = req.params.address;
-	const URL = `https://geocoder.api.here.com/6.2/geocode.json?app_id=t38YeeN2CdvTOlESpiKl&app_code=RplvOnsG0MVj2Q4Haui4Ng&searchtext=${address}`;
-	axios.get(URL).then(response => {
+	var uri = encodeURI(address);
+	console.log('current time: ', moment().format());
+	const url = `https://geocoder.api.here.com/6.2/geocode.json?app_id=t38YeeN2CdvTOlESpiKl&app_code=RplvOnsG0MVj2Q4Haui4Ng&searchtext=${uri}&jsonattributes=1`;
+	// const url = `https://geocoder.cit.api.here.com/6.2/geocode.json?xnlp=CL_JSMv3.0.17.0
+	// &app_id=t38YeeN2CdvTOlESpiKl&app_code=RplvOnsG0MVj2Q4Haui4Ng
+	// &searchText=${uri}
+	// &jsonattributes=1&jsoncallback=H.service.jsonp.handleResponse(5)`;
+	axios.get(url).then(response => {
+		console.error('bug');
 		console.log(response.data);
+
 		res.json(response.data);
 	})
 })

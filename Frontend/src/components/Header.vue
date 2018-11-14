@@ -27,7 +27,8 @@ export default {
 
 <style scoped>
   #toolBar {
-    height: 5rem;background-color: rgb(162, 235, 186);
+    height: 5rem;
+    background-color: rgb(162, 235, 186);
     font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
   }
   #ico {
@@ -46,7 +47,7 @@ export default {
     margin-left: 2.5rem;
     vertical-align: middle;
     font-size: 2.5rem;
-    font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
   }
   #btn-logout {
     height: 5rem;
