@@ -31,3 +31,16 @@ CREATE TABLE `listbooks` (
 -- Table insert for `orderdetails`
 -- ----------------------------
 INSERT INTO `listbooks`(`Fullname`, `PhoneNumber`, `Address`, `Note`, `DateTime`,`Status`) VALUES ('Binh', '0929364980', 'quận 1, hồ chí minh', 'thích xe ferrari', Now(), 1);
+
+DROP TABLE IF EXISTS `accounts`;
+CREATE TABLE `accounts` (
+  `ID` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `username` varchar(20) NOT NULL,
+  `password` varchar(20) NOT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- ----------------------------
+-- Table insert for `orderdetails`v
+-- ----------------------------
+INSERT INTO `accounts`(`username`, `password`) VALUES ('admin', 'admin');

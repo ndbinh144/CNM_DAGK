@@ -4,7 +4,10 @@ import HelloWorld from '@/components/HelloWorld'
 import RequestManagement from '../components/RequestManagement'
 import LocationIdentifier from '../components/LocationIdentifier'
 import Driver from '../components/Driver'
+import Vuetify from 'vuetify'
+import 'vuetify/dist/vuetify.min.css'
 
+Vue.use(Vuetify)
 Vue.use(Router)
 
 export default new Router({

@@ -3,12 +3,16 @@ var productRepo = require('../repos/listbookRepo.js');
 var axios = require('axios');
 var moment = require('moment');
 var router = express.Router();
+var bodyParser = require('body-parser')
+
+var jsonParser = bodyParser.json()
+var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 router.get('/:address', (req, res) => {
 	var address = req.params.address;
 	var uri = encodeURI(address);
 	console.log('current time: ', moment().format());
-	const url = `https://geocoder.api.here.com/6.2/geocode.json?app_id=t38YeeN2CdvTOlESpiKl&app_code=RplvOnsG0MVj2Q4Haui4Ng&searchtext=${uri}&jsonattributes=1`;
+	const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${uri}&key=AIzaSyBBLyWj-3FWtCbCXGW3ysEiI2fDfrv2v0Q`;
 	// const url = `https://geocoder.cit.api.here.com/6.2/geocode.json?xnlp=CL_JSMv3.0.17.0
 	// &app_id=t38YeeN2CdvTOlESpiKl&app_code=RplvOnsG0MVj2Q4Haui4Ng
 	// &searchText=${uri}
@@ -32,12 +36,9 @@ router.get('/', (req, res) => {
 		})
 })
 
-router.post('/:fullname/:phonenumber/:address/:note', (req, res) => {
-	var fullname = req.params.fullname;
-	var phonenumber = req.params.phonenumber;
-	var address = req.params.address;
-	var note = req.params.note;
-	productRepo.addBook(fullname, phonenumber, address, note)
+// fullname, phonenumber, address, note
+router.post('/', urlencodedParser, (req, res) => {
+	productRepo.addBook(req.body.FullName, req.body.PhoneNumber, req.body.Address, req.body.Note)
 		.then(rows => {
 			res.json(rows);
 		}).catch(err => {
