@@ -7,6 +7,7 @@ var productCtrl = require('./apiControllers/listbookControllers');
 
 var app = express();
 
+var urlencodedParser = bodyParser.urlencoded({ extended: false });
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(cors());
@@ -16,7 +17,13 @@ app.get('/', (req, res) => {
         msg: 'hello from nodejs express api'
     })
 });
-
+app.post("/receiver" , urlencodedParser , function(req, res){
+    var f = req.body.name;
+    var p = req.body.phone;
+    var l = req.body.pickuplocation;
+    var n = req.body.note;
+    res.send("full name :" + f + " phone : " + p);
+});
 app.use('/api/listbooks/', productCtrl);
 
 var port = process.env.PORT || 3000;
