@@ -5,7 +5,9 @@ import App from './App'
 import router from './router'
 import BootstrapVue from 'bootstrap-vue'
 import * as VueGoogleMaps from 'vue2-google-maps'
+import Vuetify from 'vuetify'
 
+Vue.use(Vuetify)
 Vue.use(VueGoogleMaps, {
   load: {
     key: 'AIzaSyBBLyWj-3FWtCbCXGW3ysEiI2fDfrv2v0Q',

@@ -14,12 +14,12 @@ export default new Router({
       component: HelloWorld
     },
     {
-      path: '/request_management',
+      path: '/app3',
       name: 'RequestManagement',
       component: RequestManagement
     },
     {
-      path: '/location_identifier',
+      path: '/app2',
       name: 'LocationIdentifier',
       component: LocationIdentifier
     }
