@@ -7,6 +7,7 @@ import router from './router'
 import BootstrapVue from 'bootstrap-vue'
 import * as VueGoogleMaps from 'vue2-google-maps'
 
+Vue.use(Vuetify)
 Vue.use(VueGoogleMaps, {
   load: {
     key: 'AIzaSyBBLyWj-3FWtCbCXGW3ysEiI2fDfrv2v0Q',
@@ -16,7 +17,6 @@ Vue.use(VueGoogleMaps, {
 
 Vue.use(BootstrapVue)
 
-Vue.use(Vuetify)
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */

@@ -1,16 +1,16 @@
 <template>
   <div class="localIdentify">
-    <h2 class="title"> Location Identifier </h2>
-    <div class="row">
+    <Header Title="Location Identifier"></Header>
+    <div class="row" id="mainView">
       <div class="col-sm-6">
         <table class="table">
           <thead>
             <tr>
-              <th>Thời điểm đặt</th>
-              <th>Họ tên</th>
-              <th>Địa chỉ đón khách</th>
-              <th>Ghi chú</th>
-              <th>Tình trạng</th>
+              <th>Time</th>
+              <th>Name</th>
+              <th>Address</th>
+              <th>Note</th>
+              <th>Status</th>
               <th></th>
             </tr>
           </thead>
@@ -22,7 +22,7 @@
               <td>{{ item.GhiChu }}</td>
               <td>{{ item.TinhTrang }}</td>
               <td>
-                <button class="btn btn-info" v-if="item.TinhTrang == 0" @click="addMarker(item.ID)">Định vị</button>
+                <button class="btn btn-info" v-if="item.TinhTrang == 0" @click="addMarker(item.ID)">Locate</button>
               </td>
             </tr>
           </tbody>
@@ -41,7 +41,14 @@
           @drag="updateCoordinates"
           @click="center=m.position"></gmap-marker>
         </gmap-map>
-        <button class="btn btn-success" id="IdentiifyBtn" @click="Identify">Xác định vị trí</button>
+        <div>
+          <gmap-autocomplete id="searchAdd"
+            @place_changed="setPlace">
+        </gmap-autocomplete>
+        </div>
+        <div>
+          <button class="btn btn-success" id="IdentiifyBtn" @click="Identify">Xác định vị trí</button>
+        </div>
       </div>
     </div>
   </div>
@@ -49,6 +56,7 @@
 
 <script>
 import 'bootstrap/dist/css/bootstrap.css'
+import Header from './Header.vue'
 export default {
   name: 'GoogleMap',
   data () {
@@ -56,6 +64,7 @@ export default {
       center: { lat: 21.0031177, lng: 105.82014079999999 },
       markers: [],
       coordinates: null,
+      currID: null,
       list_request: [
         { ID: 1,
           Ten: 'Trần Nhựt Cường',
@@ -88,7 +97,19 @@ export default {
     this.geolocate()
   },
   methods: {
+    setPlace (place) {
+      if (this.currID != null) {
+        const marker = {
+          lat: place.geometry.location.lat(),
+          lng: place.geometry.location.lng()
+        }
+        this.markers = []
+        this.markers.push({ position: marker })
+        this.center = marker
+      }
+    },
     addMarker (ID) {
+      this.currID = ID
       /* Gọi API lấy tạo độ của địa chỉ dựa trên ID */
       //
       //
@@ -114,6 +135,7 @@ export default {
       // Gọi API gửi địa chỉ sau khi xác nhận
       console.log(this.markers[0].position.lat)
       console.log(this.markers[0].position.lng)
+      this.currID = null
     },
     updateCoordinates (location) {
       this.markers = []
@@ -123,11 +145,17 @@ export default {
       }
       this.markers.push({ position: marker })
     }
+  },
+  components: {
+    'Header': Header
   }
 }
 </script>
 
 <style scoped>
+  #mainView {
+    margin-top: 2rem;
+  }
  .localIdentify {
    margin-left: 1rem;
    margin-right: 1rem;
@@ -150,5 +178,13 @@ export default {
   }
   #IdentiifyBtn {
     margin-top: 1rem;
+  }
+  #searchAdd {
+    margin: .5rem;
+    height: 2rem;
+    width: 20rem;
+    border: .1rem solid rgb(6, 148, 167);
+    border-radius: .3rem;
+    padding: .3rem;
   }
 </style>
