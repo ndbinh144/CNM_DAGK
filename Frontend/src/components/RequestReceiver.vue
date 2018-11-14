@@ -33,12 +33,6 @@
           v-model="note"
           label="Note"
         ></v-text-field>
-        <v-checkbox
-          v-model="checkbox"
-          :rules="[v => !!v || 'You must agree to continue!']"
-          label="Do you agree?"
-          required
-        ></v-checkbox>
         <v-btn
           :disabled="!valid"
           @click="submit"
@@ -58,23 +52,22 @@
 
 <script>
 import axios from 'axios'
+import 'vuetify/dist/vuetify.min.css'
 
 export default {
   data: () => ({
     valid: true,
-    name: '',
-    checkbox: false
+    name: ''
   }),
   methods: {
     submit () {
       if (this.$refs.form.validate()) {
         // Native form submission is not yet supported
-        axios.post('/locationidentifier', {
+        axios.post('/app2', {
           name: this.name,
           phone: this.phone,
           pickuplocation: this.pickuplocation,
-          note: this.note,
-          checkbox: this.checkbox
+          note: this.note
         })
         alert('Success !!!')
       }

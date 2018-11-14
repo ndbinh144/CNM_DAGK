@@ -14,12 +14,12 @@ export default new Router({
       component: RequestReceiver
     },
     {
-      path: '/app2',
+      path: '/app3',
       name: 'RequestManagement',
       component: RequestManagement
     },
     {
-      path: '/app3',
+      path: '/app2',
       name: 'LocationIdentifier',
       component: LocationIdentifier
     }
