@@ -45,6 +45,10 @@ export default {
         axios.post('http://localhost:3000/api/user/login', {
           username: this.username,
           password: this.password
+        }).then(rs => {
+          this.$router.push('/app1')
+        }).catch(rj => {
+          console.error('Invalid username or password')
         })
       }
     },
