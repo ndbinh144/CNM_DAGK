@@ -3,7 +3,8 @@ var express = require('express'),
     morgan = require('morgan'),
     cors = require('cors');
 
-var productCtrl = require('./apiControllers/listbookControllers');
+var listbooksCtrl = require('./apiControllers/listbookControllers');
+var usersCtrl = require('./apiControllers/userControllers');
 
 var app = express();
 
@@ -24,7 +25,8 @@ app.post("/receiver" , urlencodedParser , function(req, res){
     var n = req.body.note;
     res.send("full name :" + f + " phone : " + p);
 });
-app.use('/api/listbooks/', productCtrl);
+app.use('/api/listbooks/', listbooksCtrl);
+app.use('/api/user/', usersCtrl);
 
 var port = process.env.PORT || 3000;
 app.listen(port, () => {
