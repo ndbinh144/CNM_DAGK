@@ -6,8 +6,8 @@ exports.loadAll = () => {
 }
 
 exports.addBook = (Fullname, PhoneNumber, Address, Note) => {
-	var sql = "INSERT INTO `listbooks`(`Fullname`, `PhoneNumber`, `Address`, `Note`) " +
-		`VALUES ('${Fullname}', '${PhoneNumber}', '${Address}', '${Note}')`;
+	var sql = "INSERT INTO `listbooks`(`Fullname`, `PhoneNumber`, `Address`, `Note`, `DateTime`,`Status`) " +
+		`VALUES ('${Fullname}', '${PhoneNumber}', '${Address}', '${Note}', Now(), 1)`;
 	return db.load(sql);
 }
 

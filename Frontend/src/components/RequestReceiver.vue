@@ -59,17 +59,20 @@ export default {
   data: () => ({
     valid: true,
     name: '',
+    phone: '',
+    pickuplocation: '',
+    note: '',
     socket: io('localhost:3000')
   }),
   methods: {
     submit () {
       if (this.$refs.form.validate()) {
         // Native form submission is not yet supported
-        axios.post('/app2', {
-          name: this.name,
-          phone: this.phone,
-          pickuplocation: this.pickuplocation,
-          note: this.note
+        axios.post('http://localhost:3000/api/listbooks/', {
+          FullName: this.name,
+          PhoneNumber: this.phone,
+          Address: this.pickuplocation,
+          Note: this.note
         })
         alert('Success !!!')
       }
