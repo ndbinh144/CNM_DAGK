@@ -15,14 +15,14 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="item in list_request" v-bind:key="item.STT">
-              <td>{{ item.ThoiDiem }}</td>
-              <td>{{ item.Ten }}</td>
-              <td>{{ item.DiaChi }}</td>
-              <td>{{ item.GhiChu }}</td>
-              <td>{{ item.TinhTrang }}</td>
+            <tr v-for="item in list_request" v-bind:key="item.ID">
+              <td>{{ item.DateTime }}</td>
+              <td>{{ item.Fullname }}</td>
+              <td>{{ item.Address }}</td>
+              <td>{{ item.Note }}</td>
+              <td>{{ item.Status }}</td>
               <td>
-                <button class="btn btn-info" v-if="item.TinhTrang == 0" @click="addMarker(item.ID)">Locate</button>
+                <button class="btn btn-info" v-if="item.Status == 0" @click="addMarker(item.ID)">Locate</button>
               </td>
             </tr>
           </tbody>
@@ -58,6 +58,7 @@
 import 'bootstrap/dist/css/bootstrap.css'
 import Header from './Header.vue'
 import io from 'socket.io-client'
+import axios from 'axios'
 export default {
   name: 'GoogleMap',
   data () {
@@ -66,39 +67,17 @@ export default {
       markers: [],
       coordinates: null,
       currID: null,
-      list_request: [
-        { ID: 1,
-          Ten: 'Trần Nhựt Cường',
-          ThoiDiem: '12:00:12',
-          SDT: '01229696585',
-          DiaChi: 'Đại học khoa học tự nhiên',
-          GhiChu: 'Không có',
-          TinhTrang: 0
-        },
-        { ID: 2,
-          Ten: 'Trần Nhựt Cường',
-          ThoiDiem: '12:00:12',
-          SDT: '01229696585',
-          DiaChi: 'Đại học khoa học tự nhiên',
-          GhiChu: 'Không có',
-          TinhTrang: 0
-        },
-        { ID: 3,
-          Ten: 'Trần Nhựt Cường',
-          ThoiDiem: '12:00:12',
-          SDT: '01229696585',
-          DiaChi: 'Đại học khoa học tự nhiên',
-          GhiChu: 'Không có',
-          TinhTrang: 0
-        }
-      ],
+      list_request: [],
       socket: io('localhost:3000')
     }
   },
   mounted () {
     this.geolocate()
     this.socket.on('changed', () => {
-      alert('need update')
+      axios.get('http://localhost:3000/api/listbooks/').then(rs => {
+        console.log('hello', rs.data)
+        this.list_request = rs.data
+      })
     })
   },
   methods: {
