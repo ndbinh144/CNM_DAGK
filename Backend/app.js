@@ -36,7 +36,7 @@ app.use('/api/user/', usersCtrl);
 io.on('connection', socket => {
     console.log('A user connected.');
     socket.on('msg', () => {
-        console.log('dasd');
+        io.emit('changed', {});
       })
   });
 

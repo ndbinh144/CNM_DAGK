@@ -57,6 +57,7 @@
 <script>
 import 'bootstrap/dist/css/bootstrap.css'
 import Header from './Header.vue'
+import io from 'socket.io-client'
 export default {
   name: 'GoogleMap',
   data () {
@@ -90,11 +91,15 @@ export default {
           GhiChu: 'Không có',
           TinhTrang: 0
         }
-      ]
+      ],
+      socket: io('localhost:3000')
     }
   },
   mounted () {
     this.geolocate()
+    this.socket.on('changed', () => {
+      alert('need update')
+    })
   },
   methods: {
     setPlace (place) {
