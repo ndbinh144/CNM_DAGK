@@ -75,9 +75,13 @@ export default {
     this.geolocate()
     this.socket.on('changed', () => {
       axios.get('http://localhost:3000/api/listbooks/').then(rs => {
-        console.log('hello', rs.data)
         this.list_request = rs.data
       })
+    })
+  },
+  created () {
+    axios.get('http://localhost:3000/api/listbooks/').then(rs => {
+      this.list_request = rs.data
     })
   },
   methods: {

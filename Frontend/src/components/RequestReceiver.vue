@@ -66,16 +66,13 @@ export default {
   }),
   methods: {
     submit () {
-      if (this.$refs.form.validate()) {
-        // Native form submission is not yet supported
-        axios.post('http://localhost:3000/api/listbooks/', {
-          FullName: this.name,
-          PhoneNumber: this.phone,
-          Address: this.pickuplocation,
-          Note: this.note
-        })
-        alert('Success !!!')
-      }
+      axios.post('http://localhost:3000/api/listbooks/', {
+        FullName: this.name,
+        PhoneNumber: this.phone,
+        Address: this.pickuplocation,
+        Note: this.note
+      })
+      alert('Success !!!')
       this.socket.emit('msg', {})
     },
     clear () {
