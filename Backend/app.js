@@ -1,12 +1,17 @@
 var express = require('express'),
     bodyParser = require('body-parser'),
     morgan = require('morgan'),
-    cors = require('cors');
+    cors = require('cors'),
+    http = require('http'),
+    socketIO = require('socket.io');
+
 
 var listbooksCtrl = require('./apiControllers/listbookControllers');
 var usersCtrl = require('./apiControllers/userControllers');
 
 var app = express();
+var server = http.Server(app);
+var io = socketIO(server);
 
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 app.use(morgan('dev'));
@@ -28,7 +33,14 @@ app.post("/receiver" , urlencodedParser , function(req, res){
 app.use('/api/listbooks/', listbooksCtrl);
 app.use('/api/user/', usersCtrl);
 
+io.on('connection', socket => {
+    console.log('A user connected.');
+    socket.on('msg', () => {
+        console.log('dasd');
+      })
+  });
+
 var port = process.env.PORT || 3000;
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`QLBH API is running on port ${port}`);
 })

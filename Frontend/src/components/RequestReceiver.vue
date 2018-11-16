@@ -10,7 +10,7 @@
     </v-toolbar-items>
   </v-toolbar>
 <v-container grid-list-md text-xs-center>
-    <v-parallax src="https://cdn.vuetifyjs.com/images/parallax/material.jpg">
+    <v-parallax>
       <h1 style="color:black;">BOOK A CAR</h1>
       <v-form ref="form" v-model="valid" lazy-validation>
         <v-text-field
@@ -53,11 +53,13 @@
 <script>
 import axios from 'axios'
 import 'vuetify/dist/vuetify.min.css'
+import io from 'socket.io-client'
 
 export default {
   data: () => ({
     valid: true,
-    name: ''
+    name: '',
+    socket: io('localhost:3000')
   }),
   methods: {
     submit () {
@@ -71,8 +73,8 @@ export default {
         })
         alert('Success !!!')
       }
+      this.socket.emit('msg', {})
     },
-
     clear () {
       this.$refs.form.reset()
     }
