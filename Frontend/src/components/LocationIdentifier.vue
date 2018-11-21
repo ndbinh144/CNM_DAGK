@@ -20,7 +20,10 @@
               <td>{{ item.Fullname }}</td>
               <td>{{ item.Address }}</td>
               <td>{{ item.Note }}</td>
-              <td>{{ item.Status }}</td>
+              <td v-if="item.Status == 0">Chưa định vị</td>
+              <td v-if="item.Status == 1">Đã định vị</td>
+              <td v-if="item.Status == 2">Đã có xe nhận</td>
+              <td v-if="item.Status == 3">Hoàn thành</td>
               <td>
                 <button class="btn btn-info" v-if="item.Status == 0" @click="addMarker(item.ID)">Locate</button>
               </td>
@@ -85,6 +88,15 @@ export default {
     })
   },
   methods: {
+    getAdress (ID) {
+      let len = this.list_request.length
+      for (let i = 0; i < len; ++i) {
+        if (this.list_request[i].ID === ID) {
+          return this.list_request[i].Address
+        }
+      }
+      return null
+    },
     setPlace (place) {
       if (this.currID != null) {
         const marker = {
@@ -97,19 +109,36 @@ export default {
       }
     },
     addMarker (ID) {
-      this.currID = ID
+      let self = this
+      self.currID = ID
       /* Gọi API lấy tạo độ của địa chỉ dựa trên ID */
-      //
-      //
-      let latIn = 21.0031177
-      let lngIn = 105.82014079999999
-      this.markers = []
-      const marker = {
-        lat: latIn,
-        lng: lngIn
-      }
-      this.markers.push({ position: marker })
-      this.center = marker
+      let Address = self.getAdress(ID)
+      axios.get('http://localhost:3000/api/listbooks/' + Address).then(rs => {
+        if (rs.data.lat != null && rs.data.lng != null) {
+          let latIn = rs.data.lat
+          let lngIn = rs.data.lng
+          self.markers = []
+          const marker = {
+            lat: latIn,
+            lng: lngIn
+          }
+          self.markers.push({ position: marker })
+          self.center = marker
+          // Gửi API xác định thành công vị trí
+          axios.post('http://localhost:3000/api/listbooks/' + ID, {
+            status: 1
+          }).then(rs => {
+            if (rs.data.status === 1) {
+              alert('Định vị thành công')
+            } else {
+            alert('Định vị thất bại')
+            }
+            self.socket.emit('changed', {})
+          })
+        } else {
+          alert('Không định vị được vị trí')
+        }
+      })
     },
     geolocate: function () {
       navigator.geolocation.getCurrentPosition(position => {
@@ -121,9 +150,10 @@ export default {
     },
     Identify () {
       // Gọi API gửi địa chỉ sau khi xác nhận
-      console.log(this.markers[0].position.lat)
-      console.log(this.markers[0].position.lng)
-      this.currID = null
+      // console.log(this.markers[0].position.lat)
+      // console.log(this.markers[0].position.lng)
+      // this.currID = null
+      // console.log('url: ' + url.url)
     },
     updateCoordinates (location) {
       this.markers = []

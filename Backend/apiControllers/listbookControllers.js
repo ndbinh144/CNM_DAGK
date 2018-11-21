@@ -18,10 +18,14 @@ router.get('/:address', (req, res) => {
 	// &searchText=${uri}
 	// &jsonattributes=1&jsoncallback=H.service.jsonp.handleResponse(5)`;
 	axios.get(url).then(response => {
-		console.error('bug');
-		console.log(response.data);
-
-		res.json(response.data);
+		if (response.data.results.length > 0) {
+			res.json(response.data.results[0].geometry.location)
+		} else {
+			res.json({
+				lat: null,
+				lng: null
+			})
+		}
 	})
 })
 
@@ -29,6 +33,20 @@ router.get('/', (req, res) => {
 	productRepo.loadAll()
 		.then(rows => {
 			res.json(rows);
+		}).catch(err => {
+			console.log(err);
+			res.statusCode = 500;
+			res.end('View error log on console');
+		})
+})
+
+// Sua thong tin Status list book
+router.post('/:ID', (req, res) => {
+	var ID =  req. params.ID;
+	var Status = req.body.status;
+	productRepo.updateStatusBook(ID, Status)
+		.then( () => {
+			res.json({status: '1'})
 		}).catch(err => {
 			console.log(err);
 			res.statusCode = 500;

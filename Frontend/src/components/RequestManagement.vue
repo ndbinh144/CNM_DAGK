@@ -5,27 +5,28 @@
       <table class="table">
         <thead>
           <tr>
-            <th>STT</th>
-            <th>Thời điểm đặt</th>
-            <th>Họ tên</th>
-            <th>Số điện thoại</th>
-            <th>Địa chỉ đón khách</th>
-            <th>Ghi chú</th>
-            <th>Tình trạng</th>
+            <th>Time</th>
+            <th>Name</th>
+            <th>Phone number</th>
+            <th>Address</th>
+            <th>Note/th>
+            <th>Status</th>
             <th>Xem đường đi</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="item in list_request" v-bind:key="item.STT">
-            <td>{{ item.STT }}</td>
-            <td>{{ item.ThoiDiem }}</td>
-            <td>{{ item.Ten }}</td>
-            <td>{{ item.SDT }}</td>
-            <td>{{ item.DiaChi }}</td>
-            <td>{{ item.GhiChu }}</td>
-            <td>{{ item.TinhTrang }}</td>
+          <tr v-for="item in list_request" :key="item.ID">
+            <td>{{ item.DateTime }}</td>
+            <td>{{ item.Fullname }}</td>
+            <td>{{ item.PhoneNumber }}</td>
+            <td>{{ item.Address }}</td>
+            <td>{{ item.Note }}</td>
+            <td v-if="item.Status == 0">Chưa định vị</td>
+            <td v-if="item.Status == 1">Đã định vị</td>
+            <td v-if="item.Status == 2">Đã có xe nhận</td>
+            <td v-if="item.Status == 3">Hoàn thành</td>
             <td>
-              <button class="btn btn-info" v-if="item.TinhTrang > 2">Xem</button>
+              <button class="btn btn-info" v-if="item.TinhTrang > 1">Xem</button>
             </td>
           </tr>
         </tbody>
@@ -38,37 +39,27 @@
 /* Import bootstrap */
 import 'bootstrap/dist/css/bootstrap.css'
 import Header from './Header.vue'
+import io from 'socket.io-client'
+import axios from 'axios'
 export default {
   name: 'RequestManagement',
   data () {
     return {
-      list_request: [
-        { STT: 1,
-          Ten: 'Trần Nhựt Cường',
-          ThoiDiem: '12:00:12',
-          SDT: '01229696585',
-          DiaChi: 'Đại học khoa học tự nhiên',
-          GhiChu: 'Không có',
-          TinhTrang: 0
-        },
-        { STT: 2,
-          Ten: 'Trần Nhựt Cường',
-          ThoiDiem: '12:00:12',
-          SDT: '01229696585',
-          DiaChi: 'Đại học khoa học tự nhiên',
-          GhiChu: 'Không có',
-          TinhTrang: 3
-        },
-        { STT: 3,
-          Ten: 'Trần Nhựt Cường',
-          ThoiDiem: '12:00:12',
-          SDT: '01229696585',
-          DiaChi: 'Đại học khoa học tự nhiên',
-          GhiChu: 'Không có',
-          TinhTrang: 5
-        }
-      ]
+      list_request: [],
+      socket: io('localhost:3000')
     }
+  },
+  mounted () {
+    this.socket.on('changed', () => {
+      axios.get('http://localhost:3000/api/listbooks/').then(rs => {
+        this.list_request = rs.data
+      })
+    })
+  },
+  created () {
+    axios.get('http://localhost:3000/api/listbooks/').then(rs => {
+      this.list_request = rs.data
+    })
   },
   components: {
     'Header': Header

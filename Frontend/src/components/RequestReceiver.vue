@@ -62,6 +62,7 @@ export default {
     phone: '',
     pickuplocation: '',
     note: '',
+    msg: '',
     socket: io('localhost:3000')
   }),
   methods: {
@@ -73,7 +74,7 @@ export default {
         Note: this.note
       })
       alert('Success !!!')
-      this.socket.emit('msg', {})
+      this.socket.emit('changed', {})
     },
     clear () {
       this.$refs.form.reset()

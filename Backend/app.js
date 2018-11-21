@@ -35,12 +35,13 @@ app.use('/api/user/', usersCtrl);
 
 io.on('connection', socket => {
     console.log('A user connected.');
-    socket.on('msg', () => {
+    socket.on('changed', () => {
+        console.log('change list book');
         io.emit('changed', {});
       })
   });
 
 var port = process.env.PORT || 3000;
 server.listen(port, () => {
-    console.log(`QLBH API is running on port ${port}`);
+    console.log(`BookCar API is running on port ${port}`);
 })

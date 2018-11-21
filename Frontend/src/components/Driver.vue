@@ -96,8 +96,7 @@ export default {
       nextLocate: null,
       dialog: false,
       TitleDialog: null,
-      contentDialog: null,
-      time: 10
+      contentDialog: null
     }
   },
   methods: {
@@ -140,7 +139,8 @@ export default {
     },
     updateLocate () {
       // Goi API cap nhat vi tri hien tai
-      this.dialog = true
+      // 10.7609868 106.68259420000004
+      // 10.756574604592055 106.6851890807161
     }
   }
 }

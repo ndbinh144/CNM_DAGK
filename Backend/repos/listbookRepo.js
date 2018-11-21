@@ -21,3 +21,7 @@ exports.deleteBook = (id) => {
 	return db.load(sql);
 }
 
+exports.updateStatusBook = (id, status) => {
+	var sql = `UPDATE \`listbooks\` SET \`Status\`='${status}' WHERE id=${id}`;
+	return db.load(sql);
+}
