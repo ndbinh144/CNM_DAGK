@@ -1,3 +1,1 @@
-{
-  "list_drivers": []
-}
+[{"id":1,"currAddress":"Hồ Chí Minh,Việt Nam","status":false},{"id":"5","currAddress":{"lat":10.0451618,"lng":105.74685350000004},"status":true}]

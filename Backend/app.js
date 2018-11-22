@@ -8,6 +8,7 @@ var express = require('express'),
 
 var listbooksCtrl = require('./apiControllers/listbookControllers');
 var usersCtrl = require('./apiControllers/userControllers');
+var drivers = require('./fn/json-db');
 
 var app = express();
 var server = http.Server(app);
@@ -38,8 +39,15 @@ io.on('connection', socket => {
     socket.on('changed', () => {
         console.log('change list book');
         io.emit('changed', {});
-      })
-  });
+    })
+    socket.on('locate', (id) => {
+        // Gọi xe nhận request
+        io.emit('changed', {});
+        console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
+        var listDriverReady = drivers.getDriverReady();
+        io.emit('receive', {id: listDriverReady[0].id});
+    })
+});
 
 var port = process.env.PORT || 3000;
 server.listen(port, () => {

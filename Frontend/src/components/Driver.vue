@@ -83,6 +83,8 @@
 
 <script>
 import 'vuetify/dist/vuetify.min.css'
+import io from 'socket.io-client'
+import axios from 'axios'
 export default {
   name: 'Driver',
   data () {
@@ -96,12 +98,25 @@ export default {
       nextLocate: null,
       dialog: false,
       TitleDialog: null,
-      contentDialog: null
+      contentDialog: null,
+      socket: io('localhost:3000'),
+      url: 'http://localhost:3000/api/listbooks/'
     }
   },
   props: ['id'],
+  mounted () {
+    this.socket.on('receive', function (idres) {
+		  if (this.id === parseInt(idres)) {
+        this.dialog = true
+        this.TitleDialog = 'Thời gian: ' + 10
+        this.contentDialog = 'Đã có yêu cầu book xe, chấp nhận ?'
+      }
+		})
+  },
   methods: {
     changeStt () {
+      let self = this
+      let urls = self.url + 'driver/submit'
       let check = document.getElementById('check').checked
       if (this.isLocated) {
         if (check) {
@@ -111,6 +126,14 @@ export default {
           this.Status = 'STANDBY'
           this.ColorStatus = 'red'
         }
+        console.log(urls)
+        axios.post(urls, {
+          id: this.id,
+          currAddress: self.currLocate,
+          status: check
+        }).then(rs => {
+          console.log(rs.data)
+        })
       } else {
         this.TitleDialog = 'Error'
         this.contentDialog = 'Hãy xác định vị trí hiện tại'

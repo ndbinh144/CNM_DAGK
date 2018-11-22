@@ -4,6 +4,7 @@ var axios = require('axios');
 var moment = require('moment');
 var router = express.Router();
 var bodyParser = require('body-parser')
+var jsonData = require('../fn/json-db')
 
 var jsonParser = bodyParser.json()
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
@@ -52,6 +53,26 @@ router.post('/:ID', (req, res) => {
 			res.statusCode = 500;
 			res.end('View error log on console');
 		})
+})
+
+// Đăng ký driver
+router.post('/driver/submit', (req, res) => {
+	var id = req.body.id;
+	var currAddress = req.body.currAddress
+	var status = req.body.status
+	if (jsonData.checkExitDriver(id)) {
+		jsonData.updateDriver(id, currAddress, status);
+	} else {
+		new_driver = {
+			id: id,
+			currAddress: currAddress,
+			status: status
+		}
+		jsonData.addNewDriver(new_driver);
+	}
+	res.json({
+		status: 1
+	})
 })
 
 // fullname, phonenumber, address, note

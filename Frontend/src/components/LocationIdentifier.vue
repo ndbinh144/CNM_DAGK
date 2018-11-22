@@ -156,7 +156,7 @@ export default {
           if (rs.data.status === '1') {
             this.message = 'Định vị thành công'
             this.colorMessage = 'blue'
-            this.socket.emit('changed', {})
+            this.socket.emit('locate', {id: this.currID})
           } else {
             this.message = 'Định vị thất bại'
             this.colorMessage = 'red'
