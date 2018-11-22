@@ -99,6 +99,7 @@ export default {
       contentDialog: null
     }
   },
+  props: ['id'],
   methods: {
     changeStt () {
       let check = document.getElementById('check').checked
@@ -112,7 +113,7 @@ export default {
         }
       } else {
         this.TitleDialog = 'Error'
-        this.contentDialog = 'You must determine  your address'
+        this.contentDialog = 'Hãy xác định vị trí hiện tại'
         this.dialog = true
         document.getElementById('check').checked = false
       }
@@ -141,6 +142,7 @@ export default {
       // Goi API cap nhat vi tri hien tai
       // 10.7609868 106.68259420000004
       // 10.756574604592055 106.6851890807161
+      console.log(this.id)
     }
   }
 }

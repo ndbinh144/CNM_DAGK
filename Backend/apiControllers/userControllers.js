@@ -8,12 +8,11 @@ var router = express.Router();
 router.post('/login', (req, res) => {
 	userRepo.login(req.body)
 		.then(rows => {
-			console.log(rows);
+			console.log(rows[0]);
 			if (rows.length > 0) {
 				var userEntity = rows[0];
 				var acToken = authRepo.generateAccessToken(userEntity);
 				var rfToken = authRepo.generateRefreshToken();
-
 				authRepo.updateRefreshToken(userEntity.ID, rfToken)
 					.then(value => {
 						res.json({

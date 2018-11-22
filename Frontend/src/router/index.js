@@ -30,8 +30,9 @@ export default new Router({
       component: LocationIdentifier
     },
     {
-      path: '/app4',
+      path: '/app4/:id',
       name: 'Driver',
+      props: true,
       component: Driver
     },
     {
