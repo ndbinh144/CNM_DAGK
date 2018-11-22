@@ -1,6 +1,9 @@
 <template>
   <div class="localIdentify">
     <Header Title="Location Identifier"></Header>
+    <div>
+      <h3 :style="{ color: colorMessage}">{{ message }}</h3>
+    </div>
     <div class="row" id="mainView">
       <div class="col-sm-6">
         <table class="table">
@@ -67,10 +70,13 @@ export default {
   data () {
     return {
       center: { lat: 21.0031177, lng: 105.82014079999999 },
+      message: '',
+      colorMessage: 'blue',
       markers: [],
       coordinates: null,
       currID: null,
       list_request: [],
+      isLocated: false,
       socket: io('localhost:3000')
     }
   },
@@ -106,15 +112,18 @@ export default {
         this.markers = []
         this.markers.push({ position: marker })
         this.center = marker
+        this.isLocated = true
       }
     },
     addMarker (ID) {
       let self = this
+      self.isLocated = false
       self.currID = ID
       /* Gọi API lấy tạo độ của địa chỉ dựa trên ID */
       let Address = self.getAdress(ID)
       axios.get('http://localhost:3000/api/listbooks/' + Address).then(rs => {
         if (rs.data.lat != null && rs.data.lng != null) {
+          self.isLocated = true
           let latIn = rs.data.lat
           let lngIn = rs.data.lng
           self.markers = []
@@ -124,19 +133,9 @@ export default {
           }
           self.markers.push({ position: marker })
           self.center = marker
-          // Gửi API xác định thành công vị trí
-          axios.post('http://localhost:3000/api/listbooks/' + ID, {
-            status: 1
-          }).then(rs => {
-            if (rs.data.status === 1) {
-              alert('Định vị thành công')
-            } else {
-            alert('Định vị thất bại')
-            }
-            self.socket.emit('changed', {})
-          })
         } else {
-          alert('Không định vị được vị trí')
+          self.message = 'Không định vị được vị trí'
+          self.colorMessage = 'red'
         }
       })
     },
@@ -149,11 +148,21 @@ export default {
       })
     },
     Identify () {
-      // Gọi API gửi địa chỉ sau khi xác nhận
-      // console.log(this.markers[0].position.lat)
-      // console.log(this.markers[0].position.lng)
-      // this.currID = null
-      // console.log('url: ' + url.url)
+      // Gửi API xác định thành công vị trí
+      if (this.isLocated) {
+        axios.post('http://localhost:3000/api/listbooks/' + this.currID, {
+          status: 1
+        }).then(rs => {
+          if (rs.data.status === '1') {
+            this.message = 'Định vị thành công'
+            this.colorMessage = 'blue'
+            this.socket.emit('changed', {})
+          } else {
+            this.message = 'Định vị thất bại'
+            this.colorMessage = 'red'
+          }
+        })
+      }
     },
     updateCoordinates (location) {
       this.markers = []
