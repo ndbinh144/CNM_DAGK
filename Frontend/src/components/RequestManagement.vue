@@ -38,10 +38,17 @@
 /* Import bootstrap */
 import 'bootstrap/dist/css/bootstrap.css'
 import Header from './Header.vue'
+import {range} from 'lodash'
 export default {
   name: 'RequestManagement',
   data () {
     return {
+      start: null,
+      end: null,
+      center: { lat: 21.0031177, lng: 105.82014079999999 },
+      markers: [],
+      coordinates: null,
+      currID: null,
       list_request: [
         { STT: 1,
           Ten: 'Trần Nhựt Cường',

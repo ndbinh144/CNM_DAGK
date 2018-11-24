@@ -4,6 +4,7 @@ import RequestReceiver from '@/components/RequestReceiver'
 import RequestManagement from '../components/RequestManagement'
 import LocationIdentifier from '../components/LocationIdentifier'
 import Driver from '../components/Driver'
+import test from '../components/test.vue'
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
 
@@ -31,6 +32,11 @@ export default new Router({
       path: '/app4',
       name: 'Driver',
       component: Driver
+    },
+    {
+      path: '/test',
+      name: 'test',
+      component: test
     }
   ]
 })
