@@ -5,27 +5,28 @@
       <table class="table">
         <thead>
           <tr>
-            <th>STT</th>
-            <th>Thời điểm đặt</th>
-            <th>Họ tên</th>
-            <th>Số điện thoại</th>
-            <th>Địa chỉ đón khách</th>
-            <th>Ghi chú</th>
-            <th>Tình trạng</th>
+            <th>Time</th>
+            <th>Name</th>
+            <th>Phone number</th>
+            <th>Address</th>
+            <th>Note/th>
+            <th>Status</th>
             <th>Xem đường đi</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="item in list_request" v-bind:key="item.STT">
-            <td>{{ item.STT }}</td>
-            <td>{{ item.ThoiDiem }}</td>
-            <td>{{ item.Ten }}</td>
-            <td>{{ item.SDT }}</td>
-            <td>{{ item.DiaChi }}</td>
-            <td>{{ item.GhiChu }}</td>
-            <td>{{ item.TinhTrang }}</td>
+          <tr v-for="item in list_request" :key="item.ID">
+            <td>{{ item.DateTime }}</td>
+            <td>{{ item.Fullname }}</td>
+            <td>{{ item.PhoneNumber }}</td>
+            <td>{{ item.Address }}</td>
+            <td>{{ item.Note }}</td>
+            <td v-if="item.Status == 0">Chưa định vị</td>
+            <td v-if="item.Status == 1">Đã định vị</td>
+            <td v-if="item.Status == 2">Đã có xe nhận</td>
+            <td v-if="item.Status == 3">Hoàn thành</td>
             <td>
-              <button class="btn btn-info" v-if="item.TinhTrang > 2">Xem</button>
+              <button class="btn btn-info" v-if="item.TinhTrang > 1">Xem</button>
             </td>
           </tr>
         </tbody>
@@ -38,11 +39,17 @@
 /* Import bootstrap */
 import 'bootstrap/dist/css/bootstrap.css'
 import Header from './Header.vue'
+<<<<<<< HEAD
 import {range} from 'lodash'
+=======
+import io from 'socket.io-client'
+import axios from 'axios'
+>>>>>>> bb33449e0dbb6188aaeac0b8a0f0549123ff014a
 export default {
   name: 'RequestManagement',
   data () {
     return {
+<<<<<<< HEAD
       start: null,
       end: null,
       center: { lat: 21.0031177, lng: 105.82014079999999 },
@@ -75,7 +82,23 @@ export default {
           TinhTrang: 5
         }
       ]
+=======
+      list_request: [],
+      socket: io('localhost:3000')
+>>>>>>> bb33449e0dbb6188aaeac0b8a0f0549123ff014a
     }
+  },
+  mounted () {
+    this.socket.on('changed', () => {
+      axios.get('http://localhost:3000/api/listbooks/').then(rs => {
+        this.list_request = rs.data
+      })
+    })
+  },
+  created () {
+    axios.get('http://localhost:3000/api/listbooks/').then(rs => {
+      this.list_request = rs.data
+    })
   },
   components: {
     'Header': Header

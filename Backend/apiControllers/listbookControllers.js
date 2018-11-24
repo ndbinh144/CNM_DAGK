@@ -4,6 +4,7 @@ var axios = require('axios');
 var moment = require('moment');
 var router = express.Router();
 var bodyParser = require('body-parser')
+var jsonData = require('../fn/json-db')
 
 var jsonParser = bodyParser.json()
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
@@ -18,10 +19,14 @@ router.get('/:address', (req, res) => {
 	// &searchText=${uri}
 	// &jsonattributes=1&jsoncallback=H.service.jsonp.handleResponse(5)`;
 	axios.get(url).then(response => {
-		console.error('bug');
-		console.log(response.data);
-
-		res.json(response.data);
+		if (response.data.results.length > 0) {
+			res.json(response.data.results[0].geometry.location)
+		} else {
+			res.json({
+				lat: null,
+				lng: null
+			})
+		}
 	})
 })
 
@@ -34,6 +39,40 @@ router.get('/', (req, res) => {
 			res.statusCode = 500;
 			res.end('View error log on console');
 		})
+})
+
+// Sua thong tin Status list book
+router.post('/:ID', (req, res) => {
+	var ID =  req. params.ID;
+	var Status = req.body.status;
+	productRepo.updateStatusBook(ID, Status)
+		.then( () => {
+			res.json({status: '1'})
+		}).catch(err => {
+			console.log(err);
+			res.statusCode = 500;
+			res.end('View error log on console');
+		})
+})
+
+// Đăng ký driver
+router.post('/driver/submit', (req, res) => {
+	var id = req.body.id;
+	var currAddress = req.body.currAddress
+	var status = req.body.status
+	if (jsonData.checkExitDriver(id)) {
+		jsonData.updateDriver(id, currAddress, status);
+	} else {
+		new_driver = {
+			id: id,
+			currAddress: currAddress,
+			status: status
+		}
+		jsonData.addNewDriver(new_driver);
+	}
+	res.json({
+		status: 1
+	})
 })
 
 // fullname, phonenumber, address, note

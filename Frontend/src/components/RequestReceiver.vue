@@ -10,7 +10,7 @@
     </v-toolbar-items>
   </v-toolbar>
 <v-container grid-list-md text-xs-center>
-    <v-parallax src="https://cdn.vuetifyjs.com/images/parallax/material.jpg">
+    <v-parallax>
       <h1 style="color:black;">BOOK A CAR</h1>
       <v-form ref="form" v-model="valid" lazy-validation>
         <v-text-field
@@ -53,26 +53,29 @@
 <script>
 import axios from 'axios'
 import 'vuetify/dist/vuetify.min.css'
+import io from 'socket.io-client'
 
 export default {
   data: () => ({
     valid: true,
-    name: ''
+    name: '',
+    phone: '',
+    pickuplocation: '',
+    note: '',
+    msg: '',
+    socket: io('localhost:3000')
   }),
   methods: {
     submit () {
-      if (this.$refs.form.validate()) {
-        // Native form submission is not yet supported
-        axios.post('/app2', {
-          name: this.name,
-          phone: this.phone,
-          pickuplocation: this.pickuplocation,
-          note: this.note
-        })
-        alert('Success !!!')
-      }
+      axios.post('http://localhost:3000/api/listbooks/', {
+        FullName: this.name,
+        PhoneNumber: this.phone,
+        Address: this.pickuplocation,
+        Note: this.note
+      })
+      alert('Success !!!')
+      this.socket.emit('changed', {})
     },
-
     clear () {
       this.$refs.form.reset()
     }

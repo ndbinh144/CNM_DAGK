@@ -23,28 +23,149 @@
         </label>
       </div>
     </div>
+
+    <div>
+      <gmap-autocomplete id="searchAdd"
+        @place_changed="setPlace">
+      </gmap-autocomplete>
+    </div>
+
+    <div class="col-sm-6" id="ggMap">
+      <gmap-map
+      :center="center"
+      :zoom="12"
+      style="width:100%;  height: 30rem;">
+      <gmap-marker
+        :key="index"
+        v-for="(m, index) in markers"
+        :position="m.position"
+        :draggable="true"
+        @drag="updateCoordinates"
+        @click="center=m.position"></gmap-marker>
+      </gmap-map>
+    </div>
+    <div class="text-xs-center">
+      <v-dialog
+        v-model="dialog" max-width="80%">
+        <v-card>
+          <v-card-title
+            class="headline grey lighten-2"
+            primary-title>
+            {{ TitleDialog }}
+          </v-card-title>
+
+          <v-card-text>
+            <h3>{{ contentDialog }}</h3>
+          </v-card-text>
+
+          <v-divider></v-divider>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="primary"
+              flat
+              @click="dialog = false">
+              OK
+            </v-btn>
+            <v-btn
+              color="primary"
+              flat
+              @click="dialog = false">
+              CANCEL
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </div>
+    <button class="btn btn-success" @click="updateLocate"> Cập nhật vị trí </button>
   </div>
 </template>
 
 <script>
+import 'vuetify/dist/vuetify.min.css'
+import io from 'socket.io-client'
+import axios from 'axios'
 export default {
   name: 'Driver',
   data () {
     return {
+      center: { lat: 21.0031177, lng: 105.82014079999999 },
+      markers: [],
       Status: 'STANDBY',
-      ColorStatus: 'red'
+      ColorStatus: 'red',
+      isLocated: false,
+      currLocate: null,
+      nextLocate: null,
+      dialog: false,
+      TitleDialog: null,
+      contentDialog: null,
+      socket: io('localhost:3000'),
+      url: 'http://localhost:3000/api/listbooks/'
     }
+  },
+  props: ['id'],
+  mounted () {
+    this.socket.on('receive', function (idres) {
+		  if (this.id === parseInt(idres)) {
+        this.dialog = true
+        this.TitleDialog = 'Thời gian: ' + 10
+        this.contentDialog = 'Đã có yêu cầu book xe, chấp nhận ?'
+      }
+		})
   },
   methods: {
     changeStt () {
+      let self = this
+      let urls = self.url + 'driver/submit'
       let check = document.getElementById('check').checked
-      if (check) {
-        this.Status = 'READY'
-        this.ColorStatus = 'blue'
+      if (this.isLocated) {
+        if (check) {
+          this.Status = 'READY'
+          this.ColorStatus = 'blue'
+        } else {
+          this.Status = 'STANDBY'
+          this.ColorStatus = 'red'
+        }
+        console.log(urls)
+        axios.post(urls, {
+          id: this.id,
+          currAddress: self.currLocate,
+          status: check
+        }).then(rs => {
+          console.log(rs.data)
+        })
       } else {
-        this.Status = 'STANDBY'
-        this.ColorStatus = 'red'
+        this.TitleDialog = 'Error'
+        this.contentDialog = 'Hãy xác định vị trí hiện tại'
+        this.dialog = true
+        document.getElementById('check').checked = false
       }
+    },
+    setPlace (place) {
+      const marker = {
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng()
+      }
+      this.currLocate = marker
+      this.markers = []
+      this.markers.push({ position: marker })
+      this.center = marker
+      this.isLocated = true
+    },
+    updateCoordinates (location) {
+      this.markers = []
+      const marker = {
+        lat: location.latLng.lat(),
+        lng: location.latLng.lng()
+      }
+      this.nextLocate = marker
+      this.markers.push({ position: marker })
+    },
+    updateLocate () {
+      // Goi API cap nhat vi tri hien tai
+      // 10.7609868 106.68259420000004
+      // 10.756574604592055 106.6851890807161
+      console.log(this.id)
     }
   }
 }
@@ -145,5 +266,17 @@ export default {
 
   .slider.round:before {
     border-radius: 50%;
+  }
+  #searchAdd {
+    width: 80%;
+    height: 2rem;
+    border: .1rem solid rgb(13, 126, 146);
+    padding: .3rem;
+    border-radius: .3rem;
+  }
+  #ggMap {
+    width: 90%;
+    margin: 1.5rem;
+    border: .2rem solid blue;
   }
 </style>

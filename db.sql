@@ -44,3 +44,16 @@ CREATE TABLE `accounts` (
 -- Table insert for `orderdetails`v
 -- ----------------------------
 INSERT INTO `accounts`(`username`, `password`) VALUES ('admin', 'admin');
+
+-- ----------------------------
+-- Table insert for `orderdetails`
+-- ----------------------------
+INSERT INTO `listbooks`(`Fullname`, `PhoneNumber`, `Address`, `Note`, `DateTime`,`Status`) VALUES ('Binh', '0929364980', 'quận 1, hồ chí minh', 'thích xe ferrari', Now(), 1);
+
+DROP TABLE IF EXISTS `userRefreshTokenExt`;
+CREATE TABLE `userRefreshTokenExt` (
+  `userId` int(11) NOT NULL ,
+  `rfToken` varchar(20) NOT NULL,
+  `rdt` DateTime NOT NULL,
+  PRIMARY KEY (`userId`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;

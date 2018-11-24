@@ -6,8 +6,8 @@ exports.loadAll = () => {
 }
 
 exports.addBook = (Fullname, PhoneNumber, Address, Note) => {
-	var sql = "INSERT INTO `listbooks`(`Fullname`, `PhoneNumber`, `Address`, `Note`) " +
-		`VALUES ('${Fullname}', '${PhoneNumber}', '${Address}', '${Note}')`;
+	var sql = "INSERT INTO `listbooks`(`Fullname`, `PhoneNumber`, `Address`, `Note`, `DateTime`,`Status`) " +
+		`VALUES ('${Fullname}', '${PhoneNumber}', '${Address}', '${Note}', Now(), 0)`;
 	return db.load(sql);
 }
 
@@ -21,3 +21,7 @@ exports.deleteBook = (id) => {
 	return db.load(sql);
 }
 
+exports.updateStatusBook = (id, status) => {
+	var sql = `UPDATE \`listbooks\` SET \`Status\`='${status}' WHERE id=${id}`;
+	return db.load(sql);
+}
