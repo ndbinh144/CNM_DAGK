@@ -4,6 +4,7 @@ import RequestReceiver from '@/components/RequestReceiver'
 import RequestManagement from '../components/RequestManagement'
 import LocationIdentifier from '../components/LocationIdentifier'
 import Driver from '../components/Driver'
+import test from '../components/test.vue'
 import Login from '../components/Login'
 import Vuetify from 'vuetify'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
@@ -34,6 +35,11 @@ export default new Router({
       name: 'Driver',
       props: true,
       component: Driver
+    },
+    {
+      path: '/test',
+      name: 'test',
+      component: test
     },
     {
       path: '/login',

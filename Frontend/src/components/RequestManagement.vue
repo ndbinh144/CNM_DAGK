@@ -45,6 +45,12 @@ export default {
   name: 'RequestManagement',
   data () {
     return {
+      start: null,
+      end: null,
+      center: { lat: 21.0031177, lng: 105.82014079999999 },
+      markers: [],
+      coordinates: null,
+      currID: null,
       list_request: [],
       socket: io('localhost:3000')
     }
