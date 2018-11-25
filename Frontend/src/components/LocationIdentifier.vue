@@ -27,6 +27,7 @@
               <td v-if="item.Status == 1">Đã định vị</td>
               <td v-if="item.Status == 2">Đã có xe nhận</td>
               <td v-if="item.Status == 3">Hoàn thành</td>
+              <td v-if="item.Status == 4">Không có xe</td>
               <td>
                 <button class="btn btn-info" v-if="item.Status == 0" @click="addMarker(item.ID)">Locate</button>
               </td>
@@ -119,6 +120,7 @@ export default {
       let self = this
       self.isLocated = false
       self.currID = ID
+      self.message = ''
       /* Gọi API lấy tạo độ của địa chỉ dựa trên ID */
       let Address = self.getAdress(ID)
       axios.get('http://localhost:3000/api/listbooks/' + Address).then(rs => {
@@ -156,7 +158,7 @@ export default {
           if (rs.data.status === '1') {
             this.message = 'Định vị thành công'
             this.colorMessage = 'blue'
-            this.socket.emit('locate', {id: this.currID})
+            this.socket.emit('locate', {id: this.currID, position: this.markers[0].position})
           } else {
             this.message = 'Định vị thất bại'
             this.colorMessage = 'red'

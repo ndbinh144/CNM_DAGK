@@ -9,6 +9,7 @@ var express = require('express'),
 var listbooksCtrl = require('./apiControllers/listbookControllers');
 var usersCtrl = require('./apiControllers/userControllers');
 var drivers = require('./fn/json-db');
+var listBooksRepo = require('./repos/listbookRepo');
 
 var app = express();
 var server = http.Server(app);
@@ -35,21 +36,57 @@ app.use('/api/listbooks/', listbooksCtrl);
 app.use('/api/user/', usersCtrl);
 
 io.on('connection', socket => {
-    console.log('A user connected.');
     socket.on('changed', () => {
         console.log('change list book');
         io.emit('changed', {});
     })
-    socket.on('locate', (id) => {
+    socket.on('locate', (data) => {
         // Gọi xe nhận request
         io.emit('changed', {});
-        console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
-        var listDriverReady = drivers.getDriverReady();
-        io.emit('receive', {id: listDriverReady[0].id});
+        drivers.saveDataRequest(data);
+        var listDriverReady = drivers.getDriverReady(data.position);
+        var len = listDriverReady.length;
+        if(len > 0) {
+            // Gọi xe đầu tiên
+            var index = drivers.getIndex();
+            io.emit('receive', {id: listDriverReady[index].id, posCustomer: data.position});
+        } else {
+            listBooksRepo.updateStatusBook(data.id, 4);
+            drivers.resetIndex();
+            io.emit('changed', {});
+        }
+    })
+    socket.on('driverFeedBack', (dataFeedBack) => {
+        var dataReq = drivers.getDataREquest();
+        console.log(dataFeedBack.status);
+        if (dataFeedBack.status) {
+            if (dataReq != null) {
+                listBooksRepo.updateStatusBook(dataReq.id, 2);
+                drivers.resetIndex();
+                io.emit('changed', {});
+            }
+        } else {
+            drivers.increaseIndex();
+            var listDriverReady = drivers.getDriverReady(dataReq.position);
+            var len = listDriverReady.length;
+            var indexDr = drivers.getIndex();
+            if(indexDr < len) {
+                // Gọi xe kế tiếp
+                io.emit('receive', {id: listDriverReady[indexDr].id, posCustomer: dataReq.position});
+            } else {
+                if (dataReq != null) {
+                    listBooksRepo.updateStatusBook(dataReq.id, 4);
+                    drivers.resetIndex();
+                    io.emit('changed', {});
+                }
+            }
+        }
     })
 });
 
 var port = process.env.PORT || 3000;
 server.listen(port, () => {
+    drivers.resetListDriver();
     console.log(`BookCar API is running on port ${port}`);
+    console.log(`Socket is running on port ${port}`);
 })

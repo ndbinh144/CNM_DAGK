@@ -61,18 +61,18 @@
           <v-divider></v-divider>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn
-              color="primary"
-              flat
-              @click="dialog = false">
+            <button
+              class="btn btn-info"
+              id="btnYes"
+              @click="closeDialogYes">
               OK
-            </v-btn>
-            <v-btn
-              color="primary"
-              flat
-              @click="dialog = false">
+            </button>
+            <button
+              class="btn btn-danger"
+              id="btnNo"
+              @click="closeDialogNo">
               CANCEL
-            </v-btn>
+            </button>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -83,8 +83,10 @@
 
 <script>
 import 'vuetify/dist/vuetify.min.css'
+import 'bootstrap/dist/css/bootstrap.css'
 import io from 'socket.io-client'
 import axios from 'axios'
+// import { setTimeout } from 'timers'
 export default {
   name: 'Driver',
   data () {
@@ -95,50 +97,63 @@ export default {
       ColorStatus: 'red',
       isLocated: false,
       currLocate: null,
-      nextLocate: null,
+      customerLocate: null,
       dialog: false,
       TitleDialog: null,
       contentDialog: null,
+      dialogBook: false,
       socket: io('localhost:3000'),
-      url: 'http://localhost:3000/api/listbooks/'
+      url: 'http://localhost:3000/api/listbooks/',
+      isReceiveRequest: true
     }
   },
   props: ['id'],
   mounted () {
-    this.socket.on('receive', function (idres) {
-		  if (this.id === parseInt(idres)) {
-        this.dialog = true
-        this.TitleDialog = 'Thời gian: ' + 10
-        this.contentDialog = 'Đã có yêu cầu book xe, chấp nhận ?'
+    var self = this
+    this.socket.on('receive', function (data) {
+      self.dialogBook = true
+      if (self.id === data.id && self.isReceiveRequest) {
+        self.dialog = true
+        self.titleDialog = 'Thời gian: '
+        self.contentDialog = 'Đã có yêu cầu đặt xe, chấp nhận ?'
+        self.customerLocate = data.posCustomer
+        self.markers.push({ position: self.customerLocate })
+        this.center = self.customerLocate
       }
-		})
+    })
   },
   methods: {
     changeStt () {
       let self = this
       let urls = self.url + 'driver/submit'
       let check = document.getElementById('check').checked
-      if (this.isLocated) {
+      if (self.isLocated) {
         if (check) {
-          this.Status = 'READY'
-          this.ColorStatus = 'blue'
+          self.Status = 'READY'
+          self.ColorStatus = 'blue'
         } else {
-          this.Status = 'STANDBY'
-          this.ColorStatus = 'red'
+          self.Status = 'STANDBY'
+          self.ColorStatus = 'red'
         }
-        console.log(urls)
+        // console.log(urls)
         axios.post(urls, {
-          id: this.id,
+          id: self.id,
           currAddress: self.currLocate,
           status: check
         }).then(rs => {
-          console.log(rs.data)
+          if (rs.data.status === 1) {
+            self.dialog = true
+            self.TitleDialog = 'Thông báo'
+            self.contentDialog = 'Cập nhật trạng thái thành công'
+          }
         })
       } else {
-        this.TitleDialog = 'Error'
-        this.contentDialog = 'Hãy xác định vị trí hiện tại'
-        this.dialog = true
-        document.getElementById('check').checked = false
+        if (self.isLocated === false) {
+          self.TitleDialog = 'Error'
+          self.contentDialog = 'Hãy xác định vị trí hiện tại'
+          self.dialog = true
+          document.getElementById('check').checked = false
+        }
       }
     },
     setPlace (place) {
@@ -160,6 +175,29 @@ export default {
       }
       this.nextLocate = marker
       this.markers.push({ position: marker })
+    },
+    closeDialogYes () {
+      var self = this
+      if (self.dialogBook) {
+        self.socket.emit('driverFeedBack', {status: true})
+        self.dialogBook = false
+        self.isReceiveRequest = false
+        let urls = self.url + 'driver/submit'
+        axios.post(urls, {
+          id: self.id,
+          currAddress: self.currLocate,
+          status: false
+        })
+      }
+      self.dialog = false
+    },
+    closeDialogNo () {
+      var self = this
+      if (self.dialogBook) {
+        self.socket.emit('driverFeedBack', {status: false})
+        self.dialogBook = false
+      }
+      self.dialog = false
     },
     updateLocate () {
       // Goi API cap nhat vi tri hien tai
@@ -278,5 +316,9 @@ export default {
     width: 90%;
     margin: 1.5rem;
     border: .2rem solid blue;
+  }
+  #btnYes, #btnNo {
+    width: 20rem;
+    margin: .2rem;
   }
 </style>
