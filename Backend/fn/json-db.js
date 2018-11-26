@@ -29,32 +29,17 @@ exports.updateDriver = (ID, CurrAddress, Status) => {
       list_Driver[i].status = Status;
     }
   }
-  var jsonFile = JSON.stringify(list_Driver)
-  fs.writeFile(__dirname + "/../drivers/drivers.json", jsonFile, function (err) {
-    if (err) {
-        throw err;
-    }
-  })
+  writeFileDrivers();
 }
 
 exports.resetListDriver = () => {
   list_Driver = [];
-  var jsonFile = JSON.stringify(list_Driver)
-  fs.writeFile(__dirname + "/../drivers/drivers.json", jsonFile, function (err) {
-    if (err) {
-        throw err;
-    }
-  })
+  writeFileDrivers();
 }
 
 exports.addNewDriver = (Driver) => {
   list_Driver.push(Driver);
-  var jsonFile = JSON.stringify(list_Driver)
-  fs.writeFile(__dirname + "/../drivers/drivers.json", jsonFile, function (err) {
-    if (err) {
-        throw err;
-    }
-  })
+  writeFileDrivers();
 }
 
 exports.getDriverReady = (position) => {
@@ -82,6 +67,24 @@ exports.getDriverReady = (position) => {
   return list;
 }
 
+exports.updateLocateDriver = (id, pos) => {
+  var driverUpdate = getDriverByID(id);
+  var distance = getDistanceHaversin(pos, driverUpdate.currAddress);
+  if (distance * 1000 > 100) {
+    return false
+  } else {
+    var len = list_Driver.length;
+    for (var i = 0; i < len; ++i) {
+      if(list_Driver[i].id == id) {
+        list_Driver[i].currAddress.lat = pos.lat;
+        list_Driver[i].currAddress.lng = pos.lng;
+        writeFileDrivers();
+      }
+    }
+  }
+  return true;
+}
+
 exports.saveDataRequest = (data) => {
   positionRequest = data;
 }
@@ -102,6 +105,23 @@ exports.resetIndex = () => {
   indexDriver = 0;
 }
 
+function getDriverByID(id) {
+  for(var i = 0; i < list_Driver.length; ++i) {
+    if(list_Driver[i].id == id) {
+      return list_Driver[i];
+    }
+  }
+}
+
+function writeFileDrivers() {
+  var jsonFile = JSON.stringify(list_Driver)
+  fs.writeFile(__dirname + "/../drivers/drivers.json", jsonFile, function (err) {
+    if (err) {
+        throw err;
+    }
+  })
+}
+
 function getDistanceHaversin(pos1, pos2) {
   Number.prototype.toRad = function() {
     return this * Math.PI / 180;
@@ -120,8 +140,7 @@ function getDistanceHaversin(pos1, pos2) {
                   Math.cos(lat1.toRad()) * Math.cos(lat2.toRad()) * 
                   Math.sin(dLon/2) * Math.sin(dLon/2);  
   var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-  var d = R * c; 
-  console.log(d);
+  var d = R * c;
   return d;
   
 }

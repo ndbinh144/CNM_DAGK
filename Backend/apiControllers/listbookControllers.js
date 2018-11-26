@@ -41,6 +41,14 @@ router.get('/', (req, res) => {
 		})
 })
 
+// Cập nhật tọa độ drivers
+router.post('/drivers/submit_locate', (req, res) => {
+	var id = req.body.id;
+	var pos = req.body.nextPos;
+	var result = jsonData.updateLocateDriver(id, pos);
+	res.json({status: result});
+})
+
 // Sua thong tin Status list book
 router.post('/:ID', (req, res) => {
 	var ID =  req. params.ID;

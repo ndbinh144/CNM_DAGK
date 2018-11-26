@@ -37,7 +37,6 @@ app.use('/api/user/', usersCtrl);
 
 io.on('connection', socket => {
     socket.on('changed', () => {
-        console.log('change list book');
         io.emit('changed', {});
     })
     socket.on('locate', (data) => {
@@ -49,7 +48,7 @@ io.on('connection', socket => {
         if(len > 0) {
             // Gọi xe đầu tiên
             var index = drivers.getIndex();
-            io.emit('receive', {id: listDriverReady[index].id, posCustomer: data.position});
+            io.emit('receive', {id: listDriverReady[index].id, posCustomer: data.position, idCus: data.id});
         } else {
             listBooksRepo.updateStatusBook(data.id, 4);
             drivers.resetIndex();

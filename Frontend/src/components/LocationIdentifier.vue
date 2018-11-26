@@ -84,6 +84,7 @@ export default {
   mounted () {
     this.geolocate()
     this.socket.on('changed', () => {
+      console.log('changed list')
       axios.get('http://localhost:3000/api/listbooks/').then(rs => {
         this.list_request = rs.data
       })

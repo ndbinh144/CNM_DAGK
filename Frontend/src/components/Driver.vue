@@ -39,7 +39,7 @@
         :key="index"
         v-for="(m, index) in markers"
         :position="m.position"
-        :draggable="true"
+        :draggable="index === 0 && isRunning"
         @drag="updateCoordinates"
         @click="center=m.position"></gmap-marker>
       </gmap-map>
@@ -77,7 +77,10 @@
         </v-card>
       </v-dialog>
     </div>
-    <button class="btn btn-success" @click="updateLocate"> Cập nhật vị trí </button>
+    <div>
+      <button class="btn btn-success" @click="updateLocate"> Cập nhật vị trí </button>
+      <button class="btn btn-success" @click="complete">Hoàn thành</button>
+    </div>
   </div>
 </template>
 
@@ -86,7 +89,7 @@ import 'vuetify/dist/vuetify.min.css'
 import 'bootstrap/dist/css/bootstrap.css'
 import io from 'socket.io-client'
 import axios from 'axios'
-// import { setTimeout } from 'timers'
+import { setTimeout } from 'timers'
 export default {
   name: 'Driver',
   data () {
@@ -97,6 +100,7 @@ export default {
       ColorStatus: 'red',
       isLocated: false,
       currLocate: null,
+      nextLocate: null,
       customerLocate: null,
       dialog: false,
       TitleDialog: null,
@@ -104,7 +108,10 @@ export default {
       dialogBook: false,
       socket: io('localhost:3000'),
       url: 'http://localhost:3000/api/listbooks/',
-      isReceiveRequest: true
+      isReceiveRequest: true,
+      isRepRequest: false,
+      isRunning: false,
+      idCus: null
     }
   },
   props: ['id'],
@@ -112,22 +119,34 @@ export default {
     var self = this
     this.socket.on('receive', function (data) {
       self.dialogBook = true
+      self.isRepRequest = false
       if (self.id === data.id && self.isReceiveRequest) {
         self.dialog = true
-        self.titleDialog = 'Thời gian: '
-        self.contentDialog = 'Đã có yêu cầu đặt xe, chấp nhận ?'
+        self.idCus = data.idCus
+        self.contentDialog = 'Đã có yêu cầu đặt xe, bạn có 10 giây để chấp nhận ?'
         self.customerLocate = data.posCustomer
         self.markers.push({ position: self.customerLocate })
         this.center = self.customerLocate
+        setTimeout(function () {
+          if (self.isRepRequest === false) {
+            self.titleDialog = 'Thông báo'
+            self.dialog = false
+            self.socket.emit('driverFeedBack', {status: false})
+            self.dialogBook = false
+          }
+        }, 10000)
       }
     })
   },
   methods: {
+    getTimeLeft (timeout) {
+      return Math.ceil((timeout._idleStart + timeout._idleTimeout - Date.now()) / 1000)
+    },
     changeStt () {
       let self = this
       let urls = self.url + 'driver/submit'
       let check = document.getElementById('check').checked
-      if (self.isLocated) {
+      if (self.isLocated && self.isRunning === false) {
         if (check) {
           self.Status = 'READY'
           self.ColorStatus = 'blue'
@@ -153,6 +172,11 @@ export default {
           self.contentDialog = 'Hãy xác định vị trí hiện tại'
           self.dialog = true
           document.getElementById('check').checked = false
+        } else if (self.isRunning) {
+          self.TitleDialog = 'Error'
+          self.contentDialog = 'Đang chở khách, không thể đổi trạng thái'
+          self.dialog = true
+          document.getElementById('check').checked = false
         }
       }
     },
@@ -168,13 +192,11 @@ export default {
       this.isLocated = true
     },
     updateCoordinates (location) {
-      this.markers = []
       const marker = {
         lat: location.latLng.lat(),
         lng: location.latLng.lng()
       }
       this.nextLocate = marker
-      this.markers.push({ position: marker })
     },
     closeDialogYes () {
       var self = this
@@ -182,12 +204,17 @@ export default {
         self.socket.emit('driverFeedBack', {status: true})
         self.dialogBook = false
         self.isReceiveRequest = false
+        self.isRepRequest = false
+        self.isRunning = true
         let urls = self.url + 'driver/submit'
         axios.post(urls, {
           id: self.id,
           currAddress: self.currLocate,
           status: false
         })
+        self.Status = 'STANDBY'
+        self.ColorStatus = 'red'
+        document.getElementById('check').checked = false
       }
       self.dialog = false
     },
@@ -196,14 +223,49 @@ export default {
       if (self.dialogBook) {
         self.socket.emit('driverFeedBack', {status: false})
         self.dialogBook = false
+        self.isRepRequest = false
       }
       self.dialog = false
     },
     updateLocate () {
       // Goi API cap nhat vi tri hien tai
-      // 10.7609868 106.68259420000004
-      // 10.756574604592055 106.6851890807161
-      console.log(this.id)
+      var self = this
+      if (self.nextLocate != null && self.isRunning === true) {
+        var urls = self.url + 'drivers/submit_locate'
+        axios.post(urls, {
+          id: self.id,
+          nextPos: self.nextLocate
+        }).then(rs => {
+          if (rs.data.status) {
+            self.dialog = true
+            self.titleDialog = 'Thông báo'
+            self.contentDialog = 'Cập nhật vị trí thành công'
+          } else {
+            self.dialog = true
+            self.titleDialog = 'Thông báo'
+            self.contentDialog = 'Cập nhật thất bại, vị trí mới không được cách vị trí cũ quá 100m'
+          }
+        })
+      }
+    },
+    complete () {
+      var self = this
+      if (self.isRunning) {
+        self.isReceiveRequest = true
+        self.isRepRequest = true
+        self.isRunning = false
+        self.dialog = true
+        self.titleDialog = 'Thông báo'
+        self.contentDialog = 'Hoàn thành quá trình chở khách'
+        var urls = self.url + self.idCus
+        axios.post(urls, {
+          status: 3
+        }).then(rs => {
+          console.log(rs.data.status)
+          self.socket.emit('changed', {})
+        })
+        
+      }
     }
   }
 }
