@@ -63,6 +63,15 @@ router.post('/:ID', (req, res) => {
 		})
 })
 
+// Lấy thông tin chuyến xe đã được chở
+router.get('/book/:id', (req, res) => {
+	var idCus = req.params.id;
+	var result = jsonData.getBookByID(idCus);
+	res.json({
+		bookInfo: result
+	})
+})
+
 // Đăng ký driver
 router.post('/driver/submit', (req, res) => {
 	var id = req.body.id;
@@ -77,6 +86,11 @@ router.post('/driver/submit', (req, res) => {
 			status: status
 		}
 		jsonData.addNewDriver(new_driver);
+	}
+	if(req.body.idCus != null && req.body.posCus != null) {
+		var idCus = req.body.idCus;
+		var posCus = req.body.posCus;
+		jsonData.addDriverCustomer(id, idCus, currAddress, posCus);
 	}
 	res.json({
 		status: 1

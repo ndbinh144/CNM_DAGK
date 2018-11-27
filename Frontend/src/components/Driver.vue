@@ -128,7 +128,7 @@ export default {
         self.markers.push({ position: self.customerLocate })
         this.center = self.customerLocate
         setTimeout(function () {
-          if (self.isRepRequest === false) {
+          if (self.isRunning === false) {
             self.titleDialog = 'Thông báo'
             self.dialog = false
             self.socket.emit('driverFeedBack', {status: false})
@@ -210,7 +210,9 @@ export default {
         axios.post(urls, {
           id: self.id,
           currAddress: self.currLocate,
-          status: false
+          status: false,
+          idCus: self.idCus,
+          posCus: self.customerLocate
         })
         self.Status = 'STANDBY'
         self.ColorStatus = 'red'
@@ -240,6 +242,7 @@ export default {
             self.dialog = true
             self.titleDialog = 'Thông báo'
             self.contentDialog = 'Cập nhật vị trí thành công'
+            self.currAddress = self.nextLocate
           } else {
             self.dialog = true
             self.titleDialog = 'Thông báo'
@@ -256,7 +259,7 @@ export default {
         self.isRunning = false
         self.dialog = true
         self.titleDialog = 'Thông báo'
-        self.contentDialog = 'Hoàn thành quá trình chở khách'
+        self.contentDialog = 'Đã tìm thấy khách ?'
         var urls = self.url + self.idCus
         axios.post(urls, {
           status: 3
@@ -264,7 +267,6 @@ export default {
           console.log(rs.data.status)
           self.socket.emit('changed', {})
         })
-        
       }
     }
   }
@@ -376,7 +378,7 @@ export default {
   }
   #ggMap {
     width: 90%;
-    margin: 1.5rem;
+    margin: 1.5rem auto;
     border: .2rem solid blue;
   }
   #btnYes, #btnNo {

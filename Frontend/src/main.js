@@ -16,7 +16,7 @@ Vue.use(Vuetify)
 Vue.use(VueGoogleMaps, {
   load: {
     key: 'AIzaSyBBLyWj-3FWtCbCXGW3ysEiI2fDfrv2v0Q',
-    libraries: 'places'
+    libraries: 'places, directions'
   }
 })
 

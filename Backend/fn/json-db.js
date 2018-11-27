@@ -1,5 +1,6 @@
 var fs = require('fs');
 var list_Driver = require('../drivers/drivers.json');
+var list_Driver_Customer = require('../drivers/drivers_customers.json');
 var positionRequest = null;
 var indexDriver = 0;
 
@@ -105,12 +106,45 @@ exports.resetIndex = () => {
   indexDriver = 0;
 }
 
+exports.addDriverCustomer = (idDriver, idCustomer, posDriver, posCustomer) => {
+  var newBook = {
+    idDriver: idDriver,
+    idCustomer: idCustomer,
+    posDriver: posDriver,
+    posCustomer: posCustomer
+  }
+  list_Driver_Customer.push(newBook);
+  writeFileBooks();
+}
+
+exports.getBookByID = (id) => {
+  var len = list_Driver_Customer.length;
+  if (len == 0) {
+    return -1;
+  } else {
+    for(var i = 0; i < len; ++i) {
+      if(list_Driver_Customer[i].idCustomer == id) {
+        return list_Driver_Customer[i];
+      }
+    }
+  }
+}
+
 function getDriverByID(id) {
   for(var i = 0; i < list_Driver.length; ++i) {
     if(list_Driver[i].id == id) {
       return list_Driver[i];
     }
   }
+}
+
+function writeFileBooks() {
+  var jsonFile = JSON.stringify(list_Driver_Customer)
+  fs.writeFile(__dirname + "/../drivers/drivers_customers.json", jsonFile, function (err) {
+    if (err) {
+        throw err;
+    }
+  })
 }
 
 function writeFileDrivers() {
