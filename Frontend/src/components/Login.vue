@@ -1,6 +1,9 @@
 <template>
   <div class="login">
-    <h2 class="title">LOGIN</h2>
+    <Header Title="LOGIN"></Header>
+    <div class="title">
+      <lable>NHẬP TÊN ĐĂNG NHẬP VÀ MẬT KHẨU</lable>
+    </div>
     <h3 class="notification">{{ message }}</h3>
     <div class="inputLogin">
       <v-form ref="form" v-model="valid" lazy-validation>
@@ -31,6 +34,7 @@
 
 <script>
 import axios from 'axios'
+import Header from './Header.vue'
 
 export default {
   data: () => ({
@@ -45,6 +49,7 @@ export default {
       v => !!v || 'password is required'
     ]
   }),
+  components: { Header },
   methods: {
     submit () {
       if (this.$refs.form.validate()) {
@@ -55,6 +60,8 @@ export default {
         }).then(rs => {
           var result = rs.data
           if (result.auth) {
+            var token = result.access_token
+            
             if (result.user.type === 0) {
               this.$router.push('/app1')
             } else if (result.user.type === 1) {
@@ -84,7 +91,10 @@ export default {
     margin-top: 2rem;
   }
   .title {
-    color: blue;
+    margin-top: 2rem;
+    font-weight: bold;
+    font-size: 50rem;
+    color: rgb(24, 128, 110);
   }
   .notification {
     color: red

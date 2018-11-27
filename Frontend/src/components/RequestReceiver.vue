@@ -1,15 +1,8 @@
 <template>
 <div id="receiver">
-  <h2>{{msg}}</h2>
-  <v-toolbar style="margin-top:0px;">
-    <v-toolbar-side-icon></v-toolbar-side-icon>
-    <v-toolbar-title>BCT APP</v-toolbar-title>
-    <v-spacer></v-spacer>
-    <v-toolbar-items class="hidden-sm-and-down">
-      <v-btn flat>Log Out</v-btn>
-    </v-toolbar-items>
-  </v-toolbar>
-<v-container grid-list-md text-xs-center>
+  <Header Title="REQUEST RECEIVER"></Header>
+  <h2 class="msg">{{ msg }}</h2>
+  <v-container grid-list-md text-xs-center>
     <v-parallax>
       <h1 style="color:black;">BOOK A CAR</h1>
       <v-form ref="form" v-model="valid" lazy-validation>
@@ -42,18 +35,19 @@
         <v-btn @click="clear">clear</v-btn>
       </v-form>
     </v-parallax>
-</v-container>
-  <v-footer class="pa-3">
-    <v-spacer></v-spacer>
-    <div>&copy; {{ new Date().getFullYear() }}</div>
-  </v-footer>
-</div>
+  </v-container>
+    <v-footer class="pa-3">
+      <v-spacer></v-spacer>
+      <div>&copy; {{ new Date().getFullYear() }}</div>
+    </v-footer>
+  </div>
 </template>
 
 <script>
 import axios from 'axios'
 import 'vuetify/dist/vuetify.min.css'
 import io from 'socket.io-client'
+import Header from './Header.vue'
 
 export default {
   data: () => ({
@@ -65,16 +59,21 @@ export default {
     msg: '',
     socket: io('localhost:3000')
   }),
+  components: {
+    Header
+  },
   methods: {
     submit () {
+      var self = this
       axios.post('http://localhost:3000/api/listbooks/', {
-        FullName: this.name,
-        PhoneNumber: this.phone,
-        Address: this.pickuplocation,
-        Note: this.note
+        FullName: self.name,
+        PhoneNumber: self.phone,
+        Address: self.pickuplocation,
+        Note: self.note
+      }).then(rs => {
+        this.socket.emit('changed', {})
+        self.msg = 'Gửi yêu cầu thành công'
       })
-      alert('Success !!!')
-      this.socket.emit('changed', {})
     },
     clear () {
       this.$refs.form.reset()
@@ -82,3 +81,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  .msg {
+    color: blue;
+    margin-top: 1rem;
+  }
+</style>

@@ -5,9 +5,11 @@ exports.loadAll = () => {
 	return db.load(sql);
 }
 
-exports.addBook = (Fullname, PhoneNumber, Address, Note) => {
+exports.addBook = (Fullname, PhoneNumber, Address, Note, dateFormat) => {
 	var sql = "INSERT INTO `listbooks`(`Fullname`, `PhoneNumber`, `Address`, `Note`, `DateTime`,`Status`) " +
-		`VALUES ('${Fullname}', '${PhoneNumber}', '${Address}', '${Note}', Now(), 0)`;
+		`VALUES ('${Fullname}', '${PhoneNumber}', '${Address}', '${Note}', '${dateFormat}', 0)`;
+		console.log(dateFormat);
+		console.log(sql);
 	return db.load(sql);
 }
 

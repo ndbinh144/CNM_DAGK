@@ -32,6 +32,7 @@
 
     <div class="col-sm-6" id="ggMap">
       <gmap-map
+      ref="gmap"
       :center="center"
       :zoom="12"
       style="width:100%;  height: 30rem;">
@@ -45,8 +46,7 @@
       </gmap-map>
     </div>
     <div class="text-xs-center">
-      <v-dialog
-        v-model="dialog" max-width="80%">
+      <v-dialog v-model="dialog" max-width="80%">
         <v-card>
           <v-card-title
             class="headline grey lighten-2"
@@ -85,6 +85,7 @@
 </template>
 
 <script>
+import { gmapApi } from 'vue2-google-maps'
 import 'vuetify/dist/vuetify.min.css'
 import 'bootstrap/dist/css/bootstrap.css'
 import io from 'socket.io-client'
@@ -114,6 +115,9 @@ export default {
       idCus: null
     }
   },
+  computed: {
+    google: gmapApi
+  },
   props: ['id'],
   mounted () {
     var self = this
@@ -125,8 +129,6 @@ export default {
         self.idCus = data.idCus
         self.contentDialog = 'Đã có yêu cầu đặt xe, bạn có 10 giây để chấp nhận ?'
         self.customerLocate = data.posCustomer
-        self.markers.push({ position: self.customerLocate })
-        this.center = self.customerLocate
         setTimeout(function () {
           if (self.isRunning === false) {
             self.titleDialog = 'Thông báo'
@@ -217,6 +219,7 @@ export default {
         self.Status = 'STANDBY'
         self.ColorStatus = 'red'
         document.getElementById('check').checked = false
+        self.getRoute()
       }
       self.dialog = false
     },
@@ -242,17 +245,41 @@ export default {
             self.dialog = true
             self.titleDialog = 'Thông báo'
             self.contentDialog = 'Cập nhật vị trí thành công'
-            self.currAddress = self.nextLocate
+            self.currLocate = self.nextLocate
           } else {
             self.dialog = true
             self.titleDialog = 'Thông báo'
             self.contentDialog = 'Cập nhật thất bại, vị trí mới không được cách vị trí cũ quá 100m'
           }
+          self.markers = []
+          self.markers.push({ position: self.currLocate })
         })
       }
     },
+    getRoute () {
+      var self = this
+      self.markers = []
+      self.center = self.currLocate
+      var directionsService = new self.google.maps.DirectionsService()
+      var directionsDisplay = new self.google.maps.DirectionsRenderer()
+      directionsDisplay.setMap(this.$refs.gmap.$mapObject)
+      directionsService.route({
+        origin: self.currLocate,
+        destination: self.customerLocate,
+        travelMode: 'DRIVING'
+      }, function (response, status) {
+        if (status === 'OK') {
+          console.log(self.currLocate)
+          directionsDisplay.setDirections(response)
+          self.markers.push({ position: self.currLocate })
+        } else {
+          console.log('Directions request failed due to ' + status)
+        }
+      })
+    },
     complete () {
       var self = this
+      self.markers = []
       if (self.isRunning) {
         self.isReceiveRequest = true
         self.isRepRequest = true
@@ -264,7 +291,7 @@ export default {
         axios.post(urls, {
           status: 3
         }).then(rs => {
-          console.log(rs.data.status)
+          self.markers.push({ position: self.customerLocate })
           self.socket.emit('changed', {})
         })
       }

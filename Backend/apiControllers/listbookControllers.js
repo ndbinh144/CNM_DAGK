@@ -3,8 +3,9 @@ var productRepo = require('../repos/listbookRepo.js');
 var axios = require('axios');
 var moment = require('moment');
 var router = express.Router();
-var bodyParser = require('body-parser')
-var jsonData = require('../fn/json-db')
+var bodyParser = require('body-parser');
+var jsonData = require('../fn/json-db');
+var helper = require('../helper/helper.js');
 
 var jsonParser = bodyParser.json()
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
@@ -33,7 +34,8 @@ router.get('/:address', (req, res) => {
 router.get('/', (req, res) => {
 	productRepo.loadAll()
 		.then(rows => {
-			res.json(rows);
+			var result = helper.revertList(rows);
+			res.json(result);
 		}).catch(err => {
 			console.log(err);
 			res.statusCode = 500;
@@ -99,7 +101,10 @@ router.post('/driver/submit', (req, res) => {
 
 // fullname, phonenumber, address, note
 router.post('/', urlencodedParser, (req, res) => {
-	productRepo.addBook(req.body.FullName, req.body.PhoneNumber, req.body.Address, req.body.Note)
+	var d = new Date
+  var  dformat = [d.getMonth()+1, d.getDate(), d.getFullYear()].join('/')+' '+
+								 [d.getHours(), d.getMinutes(), d.getSeconds()].join(':');
+	productRepo.addBook(req.body.FullName, req.body.PhoneNumber, req.body.Address, req.body.Note, dformat)
 		.then(rows => {
 			res.json(rows);
 		}).catch(err => {

@@ -41,6 +41,7 @@
       </div>
       <div class="col-sm-5">
         <gmap-map
+        ref="gmap"
         :center="center"
         :zoom="12"
         style="width:100%;  height: 400px;">
@@ -82,21 +83,24 @@ export default {
       currID: null,
       list_request: [],
       isLocated: false,
-      socket: io('localhost:3000')
+      socket: io('localhost:3000'),
+      url: 'http://localhost:3000/api/listbooks/'
     }
   },
   mounted () {
-    this.geolocate()
-    this.socket.on('changed', () => {
+    var self = this
+    self.geolocate()
+    self.socket.on('changed', () => {
       console.log('changed list')
-      axios.get('http://localhost:3000/api/listbooks/').then(rs => {
-        this.list_request = rs.data
+      axios.get(self.url).then(rs => {
+        self.list_request = rs.data
       })
     })
   },
   created () {
-    axios.get('http://localhost:3000/api/listbooks/').then(rs => {
-      this.list_request = rs.data
+    var self = this
+    axios.get(self.url).then(rs => {
+      self.list_request = rs.data
     })
   },
   methods: {
@@ -128,7 +132,7 @@ export default {
       self.message = ''
       /* Gọi API lấy tạo độ của địa chỉ dựa trên ID */
       let Address = self.getAdress(ID)
-      axios.get('http://localhost:3000/api/listbooks/' + Address).then(rs => {
+      axios.get(self.url + Address).then(rs => {
         if (rs.data.lat != null && rs.data.lng != null) {
           self.isLocated = true
           let latIn = rs.data.lat
@@ -156,8 +160,9 @@ export default {
     },
     Identify () {
       // Gửi API xác định thành công vị trí
-      if (this.isLocated) {
-        axios.post('http://localhost:3000/api/listbooks/' + this.currID, {
+      var self = this
+      if (self.isLocated) {
+        axios.post(self.url + this.currID, {
           status: 1
         }).then(rs => {
           if (rs.data.status === '1') {
