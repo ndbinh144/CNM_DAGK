@@ -2,7 +2,7 @@
   <div class="login">
     <Header Title="LOGIN"></Header>
     <div class="title">
-      <lable>NHẬP TÊN ĐĂNG NHẬP VÀ MẬT KHẨU</lable>
+      <label>NHẬP TÊN ĐĂNG NHẬP VÀ MẬT KHẨU</label>
     </div>
     <h3 class="notification">{{ message }}</h3>
     <div class="inputLogin">
@@ -52,6 +52,7 @@ export default {
   components: { Header },
   methods: {
     submit () {
+      var self = this
       if (this.$refs.form.validate()) {
         // Native form submission is not yet supported
         axios.post('http://localhost:3000/api/user/login', {
@@ -60,8 +61,10 @@ export default {
         }).then(rs => {
           var result = rs.data
           if (result.auth) {
-            var token = result.access_token
-            
+            var cookieData = {
+              userToken: result.access_token
+            }
+            self.$cookies.set('userToken', cookieData)
             if (result.user.type === 0) {
               this.$router.push('/app1')
             } else if (result.user.type === 1) {

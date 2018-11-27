@@ -10,7 +10,7 @@
 
     <div class="col-sm-1">
       <v-toolbar-items class="hidden-sm-and-down" id="btn-logout">
-        <v-btn flat>Log out</v-btn>
+        <v-btn flat @click="logout"> Log out</v-btn>
       </v-toolbar-items>
     </div>
   </div>
@@ -21,7 +21,13 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'vuetify/dist/vuetify.min.css'
 export default {
   name: 'Header',
-  props: ['Title']
+  props: ['Title'],
+  methods: {
+    logout () {
+      this.$router.push('/login')
+      this.$cookies.remove('userToken')
+    }
+  }
 }
 </script>
 

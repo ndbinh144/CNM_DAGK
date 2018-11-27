@@ -12,28 +12,40 @@ import 'vuetify/dist/vuetify.min.css'
 Vue.use(Vuetify)
 Vue.use(Router)
 
-export default new Router({
+var router = new Router({
   routes: [
     {
       path: '/app1',
       name: 'RequestReceiver',
-      component: RequestReceiver
+      component: RequestReceiver,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/app3',
       name: 'RequestManagement',
-      component: RequestManagement
+      component: RequestManagement,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/app2',
       name: 'LocationIdentifier',
-      component: LocationIdentifier
+      component: LocationIdentifier,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/app4/:id',
       name: 'Driver',
       props: true,
-      component: Driver
+      component: Driver,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/login',
@@ -42,3 +54,18 @@ export default new Router({
     }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  var r = to.matched.some(record => record.meta.requiresAuth)
+  if (r === true) {
+    var userToken = document.cookie
+    if (userToken === '') {
+      next({
+        path: '/login'
+        // query: { redirect: to.fullPath }
+      })
+    } else next()
+  } else next()
+})
+
+export default router

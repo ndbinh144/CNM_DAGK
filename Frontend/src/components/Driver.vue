@@ -100,6 +100,7 @@ export default {
       Status: 'STANDBY',
       ColorStatus: 'red',
       isLocated: false,
+      firstLocate: null,
       currLocate: null,
       nextLocate: null,
       customerLocate: null,
@@ -131,6 +132,7 @@ export default {
         self.customerLocate = data.posCustomer
         setTimeout(function () {
           if (self.isRunning === false) {
+            self.isReceiveRequest = true
             self.titleDialog = 'Thông báo'
             self.dialog = false
             self.socket.emit('driverFeedBack', {status: false})
@@ -188,6 +190,7 @@ export default {
         lng: place.geometry.location.lng()
       }
       this.currLocate = marker
+      this.firstLocate = marker
       this.markers = []
       this.markers.push({ position: marker })
       this.center = marker
@@ -264,7 +267,7 @@ export default {
       var directionsDisplay = new self.google.maps.DirectionsRenderer()
       directionsDisplay.setMap(this.$refs.gmap.$mapObject)
       directionsService.route({
-        origin: self.currLocate,
+        origin: self.firstLocate,
         destination: self.customerLocate,
         travelMode: 'DRIVING'
       }, function (response, status) {
@@ -286,14 +289,23 @@ export default {
         self.isRunning = false
         self.dialog = true
         self.titleDialog = 'Thông báo'
-        self.contentDialog = 'Đã tìm thấy khách ?'
-        var urls = self.url + self.idCus
-        axios.post(urls, {
+        self.contentDialog = 'Hoàn thành quá trình chở khách thấy khách ?'
+        var urls1 = self.url + 'driver/submit'
+        var urls2 = self.url + self.idCus
+        axios.post(urls1, {
+          id: self.id,
+          currAddress: self.currLocate,
+          status: true
+        })
+        axios.post(urls2, {
           status: 3
         }).then(rs => {
           self.markers.push({ position: self.customerLocate })
           self.socket.emit('changed', {})
         })
+        self.Status = 'READY'
+        self.ColorStatus = 'blue'
+        document.getElementById('check').checked = true
       }
     }
   }
