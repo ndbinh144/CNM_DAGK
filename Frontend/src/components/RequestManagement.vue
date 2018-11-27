@@ -10,34 +10,34 @@
       </gmap-map>
     </div>
     <div class="mainView">
-      <table class="table">
+      <table class="table" id="tableHead">
         <thead>
           <tr>
             <th class="column1">Time</th>
             <th class="column1">Name</th>
-            <th class="column3">Phone number</th>
-            <th class="column4">Address</th>
-            <th class="column2">Note</th>
-            <th class="column3">Status</th>
-            <th class="column3">Xem đường đi</th>
+            <th class="column1">Phone number</th>
+            <th class="column1">Address</th>
+            <th class="column1">Note</th>
+            <th class="column1">Status</th>
+            <th class="column1">Show way</th>
           </tr>
         </thead>
       </table>
       <div class="rollTable">
-        <table class="table">
+        <table class="table" id="tableBody">
           <tbody>
             <tr v-for="item in list_request" :key="item.ID">
               <td class="column1">{{ item.DateTime }}</td>
               <td class="column1">{{ item.Fullname }}</td>
               <td class="column1">{{ item.PhoneNumber }}</td>
-              <td class="column4">{{ item.Address }}</td>
-              <td class="column2">{{ item.Note }}</td>
-              <td class="column3" v-if="item.Status == 0">Chưa định vị</td>
-              <td class="column3" v-if="item.Status == 1">Đã định vị</td>
-              <td class="column3" v-if="item.Status == 2">Đã có xe nhận</td>
-              <td class="column3" v-if="item.Status == 3">Hoàn thành</td>
-              <td class="column3" v-if="item.Status == 4">Không có xe</td>
-              <td class="column3">
+              <td class="column1">{{ item.Address }}</td>
+              <td class="column1">{{ item.Note }}</td>
+              <td class="column1" v-if="item.Status == 0">Chưa định vị</td>
+              <td class="column1" v-if="item.Status == 1">Đã định vị</td>
+              <td class="column1" v-if="item.Status == 2">Đã có xe nhận</td>
+              <td class="column1" v-if="item.Status == 3">Hoàn thành</td>
+              <td class="column1" v-if="item.Status == 4">Không có xe</td>
+              <td class="column1">
                 <button class="btn btn-info" v-if="item.Status == 2 || item.Status == 3" @click="xemDuongDi(item.ID)">Xem</button>
               </td>
             </tr>
@@ -129,9 +129,13 @@ export default {
     font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
   }
 
-  table {
+  #tableHead {
     width: 95%;
     margin: 0 auto;
+  }
+
+  #tableBody {
+    width: 100%;
   }
 
   th {
@@ -144,16 +148,7 @@ export default {
     margin: 1rem auto;
   }
   .column1 {
-    width: 12rem;
-  }
-  .column2 {
-    width: 15rem;
-  }
-  .column3 {
-    width: 8rem;
-  }
-  .column4 {
-    width: 17rem;
+    width: 14%;
   }
   .rollTable {
     width: 95%;
