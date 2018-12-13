@@ -76,6 +76,8 @@ router.get('/book/:id', (req, res) => {
 
 // Đăng ký driver
 router.post('/driver/submit', (req, res) => {
+	console.log('------------------------------------------');
+	console.log(req.body);
 	var id = req.body.id;
 	var currAddress = req.body.currAddress
 	var status = req.body.status
@@ -90,6 +92,7 @@ router.post('/driver/submit', (req, res) => {
 		jsonData.addNewDriver(new_driver);
 	}
 	if(req.body.idCus != null && req.body.posCus != null) {
+		console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
 		var idCus = req.body.idCus;
 		var posCus = req.body.posCus;
 		jsonData.addDriverCustomer(id, idCus, currAddress, posCus);

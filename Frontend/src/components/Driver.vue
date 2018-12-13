@@ -90,7 +90,6 @@ import 'vuetify/dist/vuetify.min.css'
 import 'bootstrap/dist/css/bootstrap.css'
 import io from 'socket.io-client'
 import axios from 'axios'
-import { setTimeout } from 'timers'
 export default {
   name: 'Driver',
   data () {
@@ -128,17 +127,8 @@ export default {
       if (self.id === data.id && self.isReceiveRequest) {
         self.dialog = true
         self.idCus = data.idCus
-        self.contentDialog = 'Đã có yêu cầu đặt xe, bạn có 10 giây để chấp nhận ?'
+        self.contentDialog = 'Đã có yêu cầu đặt xe, Bạn có 10 giây chấp nhận ?'
         self.customerLocate = data.posCustomer
-        setTimeout(function () {
-          if (self.isRunning === false) {
-            self.isReceiveRequest = true
-            self.titleDialog = 'Thông báo'
-            self.dialog = false
-            self.socket.emit('driverFeedBack', {status: false})
-            self.dialogBook = false
-          }
-        }, 10000)
       }
     })
   },
@@ -209,9 +199,10 @@ export default {
         self.socket.emit('driverFeedBack', {status: true})
         self.dialogBook = false
         self.isReceiveRequest = false
-        self.isRepRequest = false
+        self.isRepRequest = true
         self.isRunning = true
         let urls = self.url + 'driver/submit'
+        console.log(self.idCus)
         axios.post(urls, {
           id: self.id,
           currAddress: self.currLocate,
@@ -231,7 +222,7 @@ export default {
       if (self.dialogBook) {
         self.socket.emit('driverFeedBack', {status: false})
         self.dialogBook = false
-        self.isRepRequest = false
+        self.isRepRequest = true
       }
       self.dialog = false
     },
@@ -282,6 +273,7 @@ export default {
     },
     complete () {
       var self = this
+      console.log(self.idCus)
       self.markers = []
       if (self.isRunning) {
         self.isReceiveRequest = true
@@ -289,7 +281,7 @@ export default {
         self.isRunning = false
         self.dialog = true
         self.titleDialog = 'Thông báo'
-        self.contentDialog = 'Hoàn thành quá trình chở khách thấy khách ?'
+        self.contentDialog = 'Hoàn thành quá trình chở khách khách ?'
         var urls1 = self.url + 'driver/submit'
         var urls2 = self.url + self.idCus
         axios.post(urls1, {
